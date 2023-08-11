@@ -48,10 +48,10 @@ namespace IdentityService.Api.Extensions
         public static void Configure(this WebApplication app)
         {
             app.UseMiddleware<ExceptionHandlerMiddleware>();
-            app.MapHealthChecks("/health", new HealthCheckOptions
-            {
-                ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
-            });
+            //app.MapHealthChecks("/health", new HealthCheckOptions
+            //{
+            //    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+            //});
             app.AddSeedData();
 
             // Configure the HTTP request pipeline.
@@ -63,7 +63,8 @@ namespace IdentityService.Api.Extensions
 
  
             app.UseHttpsRedirection();
-
+            app.UseAuthentication();
+            app.UseAuthorization();
             app.MapControllers();
 
             app.Run();

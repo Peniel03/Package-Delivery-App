@@ -11,14 +11,14 @@
         /// <param name="services">The services</param>
         /// <param name="configuration">The confuguration</param>
         /// <returns></returns>
-        public static IServiceCollection AddHealthCheck(this IServiceCollection services,
-            IConfiguration configuration)
-        {
-            services
-                .AddHealthChecks()
-                .AddSqlServer(configuration.GetConnectionString("DefaultConnection"));
+        //public static IServiceCollection AddHealthCheck(this IServiceCollection services,
+        //    IConfiguration configuration)
+        //{
+        //    services
+        //        .AddHealthChecks()
+        //        .AddSqlServer(configuration.GetConnectionString("DefaultConnection"));
 
-            return services;
-        }
+        //    return services;
+        //}
     }
 }
