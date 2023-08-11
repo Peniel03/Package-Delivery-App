@@ -1,5 +1,7 @@
 ﻿using IdentityService.DataAccess.DataContext;
+using IdentityService.DataAccess.Interfaces;
 using IdentityService.DataAccess.Models;
+using IdentityService.DataAccess.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -33,9 +35,9 @@ namespace IdentityService.DataAccess.Extentions
             serviceProvider.GetRequiredService<IdentityContext>().Set<UserRefreshToken>());
             services.AddScoped(serviceProvider =>
             serviceProvider.GetRequiredService<IdentityContext>().Set<UserClaim>());
-            //services.AddScoped<IUserClaimRepository, UserClaimRepository>();
-            //services.AddScoped<IUserRefreshRepository, UserRefreshRepository>();
-            //services.AddScoped<ISaveChangesRepository, SaveChangesRepository>();
+            services.AddScoped<IUserClaimRepository, UserClaimRepository>();
+            services.AddScoped<IUserRefreshTokenRepository, UserRefreshTokenRepository>();
+            services.AddScoped<ISaveChangesRepository, SaveChangesRepository>();
 
             return services;
         }

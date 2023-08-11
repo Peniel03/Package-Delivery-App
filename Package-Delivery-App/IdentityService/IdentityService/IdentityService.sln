@@ -11,11 +11,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "IdentityService.BusinessLog
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "IdentityService.Api", "IdentityService.Api", "{05A793D8-2F79-4A66-9642-5642805A163C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdentityService.BusinessLogic", "IdentityService.BusinessLogic\IdentityService.BusinessLogic.csproj", "{56F9B5AF-0452-47C3-BBDD-7912F1FE0A59}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdentityService.BusinessLogic", "IdentityService.BusinessLogic\IdentityService.BusinessLogic.csproj", "{56F9B5AF-0452-47C3-BBDD-7912F1FE0A59}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdentityService.DataAccess", "IdentityService.DataAccess\IdentityService.DataAccess.csproj", "{FDF746C4-2087-4F6F-A547-494FD9B7631B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdentityService.DataAccess", "IdentityService.DataAccess\IdentityService.DataAccess.csproj", "{FDF746C4-2087-4F6F-A547-494FD9B7631B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdentityService.Api", "IdentityService.Api\IdentityService.Api.csproj", "{E7ED0C30-F21F-47D4-9C46-975441DEF8D7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdentityService.Api", "IdentityService.Api\IdentityService.Api.csproj", "{E7ED0C30-F21F-47D4-9C46-975441DEF8D7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
