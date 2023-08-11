@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNet.Identity.EntityFramework;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,11 +12,12 @@ namespace IdentityService.DataAccess.Models
     /// </summary>
     public class UserRole: IdentityRole<int>
     {
+
         /// <summary>
         /// Initializes an instance of <see cref="UserRole"/>
         /// </summary>
         /// <param name="roleName">the name of the role</param>
-        public UserRole(string roleName) : base(roleName)
+        public UserRole(string name) : base(name)
         {
             
         }

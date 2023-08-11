@@ -10,6 +10,9 @@ using System.Threading.Tasks;
 
 namespace IdentityService.DataAccess.DataContext
 {
+    /// <summary>
+    /// The identity context of the application
+    /// </summary>
     public class IdentityContext: IdentityDbContext<User,UserRole,int,UserClaim,
         IdentityUserRole<int>,
         IdentityUserLogin<int>, 

@@ -18,6 +18,12 @@ namespace IdentityService.DataAccess.Extentions
     public static class AppDependenciesConfiguration
     {
 
+        /// <summary>
+        /// Function To Identity Confirguration to the services of the application
+        /// </summary>
+        /// <param name="services">he services of the app</param>
+        /// <param name="options">Options to build the Database context</param>
+        /// <returns></returns>
         public static IServiceCollection AddIdentityServiceConfigutation(this IServiceCollection services, Action<DbContextOptionsBuilder> options)
         {
             services.AddDbContextPool<IdentityContext>(options)
