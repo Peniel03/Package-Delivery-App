@@ -28,7 +28,7 @@ namespace IdentityService.DataAccess.Interfaces
         /// Function to get a refresh userRefreshToken that exists in the database
         /// </summary>
         /// <param name="tokenRefreshed">The user refresh userRefreshToken that we want to get</param>
-         /// <returns>An object <see cref="UserRefreshToken"/></returns>
+        /// <returns>An object <see cref="UserRefreshToken"/></returns>
         Task<UserRefreshToken> GetSavedUserRefreshTokensAsync(string tokenRefreshed, CancellationToken token);
 
     }

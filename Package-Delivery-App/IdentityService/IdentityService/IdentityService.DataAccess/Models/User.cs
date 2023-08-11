@@ -12,11 +12,11 @@ namespace IdentityService.DataAccess.Models
         /// <summary>
         /// the first name of the user
         /// </summary>
-       public string FirstName { get; set; } = string.Empty;
+        public string FirstName { get; set; } = string.Empty;
         /// <summary>
         /// the last name of the user
         /// </summary>
-       public string LastName { get; set; } = string.Empty;
+        public string LastName { get; set; } = string.Empty;
 
         /// <summary>
         /// Navigation property for the claims of the user

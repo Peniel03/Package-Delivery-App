@@ -14,7 +14,7 @@ namespace IdentityService.DataAccess.Repositories
     /// </summary>
     public class SaveChangesRepository : ISaveChangesRepository
     {
-        private readonly IdentityContext _indentityContext; 
+        private readonly IdentityContext _indentityContext;
         private readonly ILogger<SaveChangesRepository> _logger;
 
         /// <summary>
