@@ -11,12 +11,9 @@ using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Runtime;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace IdentityService.BusinessLogic.Servcices
 {
@@ -29,7 +26,7 @@ namespace IdentityService.BusinessLogic.Servcices
         private readonly UserManager<User> _userManager;
         private readonly IUserRefreshTokenRepository _userRefreshTokenRepository;
         private readonly IUserClaimRepository _userClaimRepository;
-        private readonly ILogger<AuthorizationService> _logger;
+        private readonly ILoggerManager _logger;
         private readonly ISaveChangesRepository _saveChangesRepository;
 
         /// <summary>
@@ -41,7 +38,7 @@ namespace IdentityService.BusinessLogic.Servcices
         /// <param name="userRefreshTokenRepository"></param>
         /// <param name="saveChangesRepository"></param>
         public AuthorizationService(UserManager<User> userManager,
-            ILogger<AuthorizationService> logger,
+            ILoggerManager logger,
             IConfiguration configuration,
             IUserRefreshTokenRepository userRefreshTokenRepository,
             IUserClaimRepository userClaimRepository ,
@@ -78,7 +75,7 @@ namespace IdentityService.BusinessLogic.Servcices
             });
 
             await _saveChangesRepository.SaveChangesAsync(cancellationToken);
-            _logger.LogInformation("Saved the changes to the database");
+            _logger.LogInfo("Saved the changes to the database");
 
             return new TokenDto
             {

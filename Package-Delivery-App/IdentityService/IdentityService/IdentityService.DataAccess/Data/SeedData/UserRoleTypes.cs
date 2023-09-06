@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IdentityService.BusinessLogic.DTOs
+namespace IdentityService.DataAccess.Data.SeedData
 {
     /// <summary>
     /// the different type of user role

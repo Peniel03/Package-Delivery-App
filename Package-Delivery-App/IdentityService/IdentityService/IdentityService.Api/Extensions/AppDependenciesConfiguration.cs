@@ -3,7 +3,6 @@ using IdentityService.Api.Middlewares;
 using IdentityService.Api.Validators;
 using Microsoft.EntityFrameworkCore;
 using IdentityService.BusinessLogic.Interfaces;
-using IdentityService.BusinessLogic.SeedData;
 using IdentityService.BusinessLogic.Servcices;
 using IdentityService.DataAccess.Extentions;
 using FluentValidation;
@@ -11,6 +10,8 @@ using FluentValidation.AspNetCore;
 using IdentityService.DataAccess.DataContext;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using IdentityService.DataAccess.Data.SeedData;
+using IdentityService.BusinessLogic.Logger;
 
 namespace IdentityService.Api.Extensions
 {
@@ -25,7 +26,7 @@ namespace IdentityService.Api.Extensions
         /// </summary>
         /// <param name="builder">The application builder</param>
         /// <returns>A <see cref="WebApplicationBuilder"/></returns>
-        public static WebApplicationBuilder ConfigureServicesApplication(this WebApplicationBuilder builder,IConfiguration configuration)
+        public static WebApplicationBuilder ConfigureApplicationServices(this WebApplicationBuilder builder,IConfiguration configuration)
         {
 
              builder.Services
@@ -33,12 +34,13 @@ namespace IdentityService.Api.Extensions
                 {
                     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
                 })
-                
+
                 .AddAutoMapper(typeof(UserProfile), typeof(ClaimProfile))
                 .AddScoped<IAccountService, AccountService>()
                 .AddScoped<IAuthorizationService, AuthorizationService>()
                 .AddScoped<ISessionService, SessionService>()
                 .AddScoped<SeedUserRolesData>()
+                .AddSingleton<ILoggerManager, LoggerManager>()
                 .AddValidatorsFromAssemblyContaining<UserCreateValidator>()
                 .AddFluentValidationAutoValidation();
 

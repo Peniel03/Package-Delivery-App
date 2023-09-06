@@ -1,4 +1,5 @@
 ﻿using IdentityService.BusinessLogic.Exceptions;
+using IdentityService.BusinessLogic.Interfaces;
 
 namespace IdentityService.Api.Middlewares
 {
@@ -8,14 +9,14 @@ namespace IdentityService.Api.Middlewares
     public class ExceptionHandlerMiddleware
     {
         private readonly RequestDelegate _next;
-        private ILogger<ExceptionHandlerMiddleware> _logger;
+        private readonly  ILoggerManager _logger;
 
         /// <summary>
         /// Initializes a instance of <see cref="ExceptionHandlerMiddleware"/>
         /// </summary>
         /// <param name="next">A <see cref="RequestDelegate"/> that point toward the next middleware</param>
         /// <param name="logger">the logger</param>
-        public ExceptionHandlerMiddleware(RequestDelegate next, ILogger<ExceptionHandlerMiddleware> logger)
+        public ExceptionHandlerMiddleware(RequestDelegate next, ILoggerManager logger)
         {
             _next = next;
             _logger = logger;
