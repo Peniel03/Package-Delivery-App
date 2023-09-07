@@ -1,16 +1,10 @@
 ﻿using AutoMapper;
-using Microsoft.Extensions.Logging;
 using ShipmentService.BusinessLogic.DTOs;
 using ShipmentService.BusinessLogic.Exceptions;
 using ShipmentService.BusinessLogic.Interfaces;
 using ShipmentService.DataAccess.Interfaces;
 using ShipmentService.DataAccess.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace ShipmentService.BusinessLogic.Services
 {
@@ -21,7 +15,7 @@ namespace ShipmentService.BusinessLogic.Services
     {
         private readonly ILocationRepository _locationRepository;
         private readonly IMapper _mapper;
-        private readonly ILogger<LocationService> _logger;
+        private readonly ILoggerManager _logger;
         private readonly ISaveChangesRepository _saveChangesRepository;
 
         /// <summary>
@@ -32,8 +26,8 @@ namespace ShipmentService.BusinessLogic.Services
         /// <param name="logger"></param>
         /// <param name="saveChangesRepository"></param>
         public LocationService(ILocationRepository locationRepository, 
-            IMapper mapper, 
-            ILogger<LocationService> logger, 
+            IMapper mapper,
+            ILoggerManager logger, 
             ISaveChangesRepository saveChangesRepository)
         {
             _locationRepository = locationRepository;
@@ -54,22 +48,21 @@ namespace ShipmentService.BusinessLogic.Services
             var mappedLocation = _mapper.Map<Location>(locationDto);
             var checkedLocation = await _locationRepository.GetById(mappedLocation.Id, cancellationToken);
 
-            //if (checkedLocation != null)
-            //{
-            //    _logger.LogError("Error occured while adding the location");
-            //    throw new AlreadyExistException("This location already exist");
-            //}
+            if (checkedLocation != null)
+            {
+                _logger.LogError("Error occured while adding the location");
+                throw new AlreadyExistException("This location already exist");
+            }
 
             _locationRepository.Add(mappedLocation);
-
             try
             {
                 await _saveChangesRepository.SaveChangesAsync();
-                _logger.LogInformation("Changes successfully saved in the database");
+                _logger.LogInfo("Changes successfully saved in the database");
             }
             catch (Exception ex)
             {
-                _logger.LogInformation($"Error occured while adding a location{ex.Message}",ex);  
+                _logger.LogInfo($"Error occured while adding a location{ex.Message}");  
                 throw new ArgumentException($"Something went wrong while adding the location {ex.Message}");
             }
             return locationDto; 
@@ -97,7 +90,7 @@ namespace ShipmentService.BusinessLogic.Services
             {
                 _locationRepository.Delete(mappedLocation);
                 await _saveChangesRepository.SaveChangesAsync();
-                _logger.LogInformation("Changes successfully saved in the database");
+                _logger.LogInfo("Changes successfully saved in the database");
             }
             catch (Exception ex)
             {
@@ -238,13 +231,12 @@ namespace ShipmentService.BusinessLogic.Services
             {
                 _locationRepository.Update(mappedLocation);
                 await _saveChangesRepository.SaveChangesAsync();
-                _logger.LogInformation("Changes successfully saved in the database");
+                _logger.LogInfo("Changes successfully saved in the database");
             }
             catch(Exception ex)
             {
                 throw new ArgumentException($"Something went wrong while adding the location {ex.Message}");
             }
-
             return locationDto;
         }
     }

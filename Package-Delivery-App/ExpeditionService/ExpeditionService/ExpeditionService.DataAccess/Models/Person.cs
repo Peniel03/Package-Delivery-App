@@ -18,7 +18,7 @@ namespace ExpeditionService.DataAccess.Models
         /// <summary>
         /// The Id of the person
         /// </summary>
-        public int Id { get; set; }
+        public string Id { get; set; }
 
         /// <summary>
         /// The name of the person

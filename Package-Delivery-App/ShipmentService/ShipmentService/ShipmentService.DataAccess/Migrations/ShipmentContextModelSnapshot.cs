@@ -205,13 +205,13 @@ namespace ShipmentService.DataAccess.Migrations
                     b.HasOne("ShipmentService.DataAccess.Models.Package", "Package")
                         .WithOne("Shipment")
                         .HasForeignKey("ShipmentService.DataAccess.Models.Shipment", "PackageId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("ShipmentService.DataAccess.Models.Person", "Person")
                         .WithMany("shipments")
                         .HasForeignKey("RecipientId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Location");

@@ -1,10 +1,5 @@
 ﻿using ShipmentService.BusinessLogic.DTOs;
 using ShipmentService.DataAccess.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ShipmentService.BusinessLogic.Interfaces
 {

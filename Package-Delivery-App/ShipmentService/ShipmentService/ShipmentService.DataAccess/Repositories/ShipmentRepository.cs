@@ -1,9 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using ShipmentService.DataAccess.DataContext;
 using ShipmentService.DataAccess.Interfaces;
 using ShipmentService.DataAccess.Models;
-
 
 namespace ShipmentService.DataAccess.Repositories
 {
@@ -14,18 +12,15 @@ namespace ShipmentService.DataAccess.Repositories
     {
         private readonly ShipmentContext _shipmentContext;
         private readonly DbSet<Shipment> _shipments;
-        private readonly ILogger<Shipment> _logger;
 
         /// <summary>
         /// initialization of a new instance of <see cref="ShipmentRepository"/>
         /// </summary>
         /// <param name="shipmentContext"></param>
-        /// <param name="logger"></param>
-        public ShipmentRepository(ShipmentContext shipmentContext, ILogger<Shipment> logger)
+        public ShipmentRepository(ShipmentContext shipmentContext)
         {
             _shipmentContext = shipmentContext;
             _shipments = _shipmentContext.Set<Shipment>();
-            _logger = logger;
         }
 
         /// <summary>
@@ -35,7 +30,6 @@ namespace ShipmentService.DataAccess.Repositories
         public void Add(Shipment shipment)
         {
             _shipments.Add(shipment);
-            _logger.LogInformation($"the shipment {shipment.TrackingNumber} has been added to the database");
         }
 
         /// <summary>
@@ -145,7 +139,6 @@ namespace ShipmentService.DataAccess.Repositories
         public void Update(Shipment shipment)
         {
             _shipments.Update(shipment);
-            _logger.LogInformation($"The shipment {shipment.TrackingNumber} has been updated");
-         }
+        }
     }
 }

@@ -1,7 +1,6 @@
 ﻿using System.Text.Json;
 using System.Text;
 using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using ShipmentService.BusinessLogic.Interfaces;
 using ShipmentService.BusinessLogic.Services;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
@@ -9,11 +8,10 @@ using ShipmentService.Api.Mapping.Profiles;
 using ShipmentService.Api.Validators;
 using ShipmentService.DataAccess.Extensions;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using System.Reflection;
-using AutoMapper;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using ShipmentService.BusinessLogic.Logger;
 
 namespace ShipmentService.Api.Extensions
 {
@@ -43,6 +41,7 @@ namespace ShipmentService.Api.Extensions
                 .AddScoped<IPersonService, PersonService>()
                 .AddScoped<ILocationService, LocationService>()
                 .AddScoped<IPackageService, PackageService>()
+                .AddScoped<ILoggerManager, LoggerManager>()
                 //.AddHealthCheck(builder.Configuration)           
                 .AddValidatorsFromAssemblyContaining<ShipmentCreateValidator>()
                 .AddFluentValidationAutoValidation();

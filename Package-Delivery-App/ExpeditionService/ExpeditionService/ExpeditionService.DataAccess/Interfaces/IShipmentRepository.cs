@@ -1,11 +1,13 @@
-﻿using ShipmentService.DataAccess.Models;
+﻿using ExpeditionService.DataAccess.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace ShipmentService.DataAccess.Interfaces
+namespace ExpeditionService.DataAccess.Interfaces
 {
-    /// <summary>
-    /// The shipment repository interface to perfom additionals operations on shipment
-    /// </summary>
-    public interface IShipmentRepository:IBaseRepository<Shipment>
+    public interface IShipementRepository: IBaseRepository<Shipment>
     {
         /// <summary>
         /// Function to get shipment by tracking number
@@ -19,7 +21,7 @@ namespace ShipmentService.DataAccess.Interfaces
         /// </summary>
         /// <param name="pickUpDateTime">the pickup date  of the shipment</param>
         /// <returns>A <see cref="Task"/> that contains <seealso cref="Shipment"/></returns>
-        Task<Shipment> GetShipmentByPickUpDateTime(DateTimeOffset pickUpDateTime ,CancellationToken cancellationToken);
+        Task<Shipment> GetShipmentByPickUpDateTime(DateTimeOffset pickUpDateTime, CancellationToken cancellationToken);
 
         /// <summary>
         /// Function to get shipment by actual delivery date
@@ -41,7 +43,6 @@ namespace ShipmentService.DataAccess.Interfaces
         /// <param name="status">the status of the shipment</param>
         /// <returns>A <see cref="Task"/>that contains <seealso cref="Shipment"/> </returns>
         Task<Shipment> GetShipmentByStatus(string status, CancellationToken cancellationToken);
-
 
     }
 }

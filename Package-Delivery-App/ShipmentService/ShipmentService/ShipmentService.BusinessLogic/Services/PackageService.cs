@@ -1,16 +1,10 @@
 ﻿using AutoMapper;
-using Microsoft.Extensions.Logging;
 using ShipmentService.BusinessLogic.DTOs;
 using ShipmentService.BusinessLogic.Exceptions;
 using ShipmentService.BusinessLogic.Interfaces;
 using ShipmentService.DataAccess.Interfaces;
 using ShipmentService.DataAccess.Models;
-using ShipmentService.DataAccess.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace ShipmentService.BusinessLogic.Services
 {
@@ -21,7 +15,7 @@ namespace ShipmentService.BusinessLogic.Services
     {
         private readonly IPackageRepository _packageRepository;
         private readonly IMapper _mapper;
-        private readonly ILogger<PackageService> _logger;
+        private readonly ILoggerManager _logger;
         private readonly ISaveChangesRepository _saveChangesRepository;
 
         /// <summary>
@@ -33,7 +27,7 @@ namespace ShipmentService.BusinessLogic.Services
         /// <param name="saveChangesRepository"></param>
         public PackageService(IPackageRepository packageRepository,
             IMapper mapper,
-            ILogger<PackageService> logger,
+            ILoggerManager logger,
             ISaveChangesRepository saveChangesRepository)
         {
             _packageRepository = packageRepository;
@@ -54,22 +48,22 @@ namespace ShipmentService.BusinessLogic.Services
             var mappedPackage = _mapper.Map<Package>(packageDto);
             var checkedPackage = await _packageRepository.GetById(mappedPackage.Id, cancellationToken);
 
-            //if (checkedPackage != null)
-            //{
-            //    _logger.LogError("Error occured while adding the package");
-            //    throw new AlreadyExistException("This package already exist");
-            //}
+            if (checkedPackage != null)
+            {
+                _logger.LogError("Error occured while adding the package");
+                throw new AlreadyExistException("This package already exist");
+            }
 
             _packageRepository.Add(mappedPackage);
 
             try
             {
                 await _saveChangesRepository.SaveChangesAsync();
-                _logger.LogInformation("Changes successfully saved in the database");
+                _logger.LogInfo("Changes successfully saved in the database");
             }
             catch (Exception ex)
             {
-                _logger.LogInformation($"Error occured while adding a package{ex.Message}", ex);
+                _logger.LogInfo($"Error occured while adding a package{ex.Message}");
                 throw new ArgumentException($"Something went wrong while adding the package {ex.Message}");
             }
             return packageDto; 
@@ -92,19 +86,17 @@ namespace ShipmentService.BusinessLogic.Services
             {
                 throw new NotFoundException("The package wasn't found");
             }
-
             try
             {
                 _packageRepository.Delete(mappedPackage);
                 await _saveChangesRepository.SaveChangesAsync();
-                _logger.LogInformation("Changes successfully saved in the database");
+                _logger.LogInfo("Changes successfully saved in the database");
             }
             catch (Exception ex)
             {
                 throw new ArgumentException($"Something went wrong while deleting the package {ex.Message}", ex);
             }
             return packageDto;
-
         }
 
         /// <summary>
@@ -220,7 +212,7 @@ namespace ShipmentService.BusinessLogic.Services
             {
                 _packageRepository.Update(mappedPackage);
                 await _saveChangesRepository.SaveChangesAsync();
-                _logger.LogInformation("Changes successfully saved in the database");
+                _logger.LogInfo("Changes successfully saved in the database");
             }
             catch (Exception ex)
             {
@@ -228,8 +220,6 @@ namespace ShipmentService.BusinessLogic.Services
             }
 
             return packageDto; 
-        }
-
-        
+        }      
     }
 }

@@ -12,7 +12,7 @@ namespace ShipmentService.Api.Controllers
     /// <summary>
     /// the package controller
     /// </summary>
-    [Route("api/[controller]")]
+    [Route("api/persons/{personId}/packages")] 
     [ApiController]
     public class PackageController : ControllerBase
     {
@@ -37,7 +37,7 @@ namespace ShipmentService.Api.Controllers
         /// <param name="packagerequest">The package that we want to create</param>
         /// <param name="CancellationToken">The cancellation token from the http request</param>
         /// <returns>OK if the package has been created or badrequest if not</returns>
-        [HttpPost("create-package/{packagerequest,CancellationToken}")]
+        [HttpPost("create/")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> CreatePackage([FromBody]  PackageRequest packagerequest, CancellationToken CancellationToken)
@@ -57,7 +57,7 @@ namespace ShipmentService.Api.Controllers
         /// </summary>
         /// <param name="cancellationToken">the cancellation token</param>
         /// <returns>OK if the package exists or badrequest if not</returns>
-        [HttpGet("get-all-packages/{cancellationToken}")]
+        [HttpGet("get-all")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetAllPackages(CancellationToken cancellationToken)
         {
@@ -78,7 +78,7 @@ namespace ShipmentService.Api.Controllers
         /// <param name="packagerequest">the package that we want to get</param>
         /// <param name="cancellationToken">the cancellation token</param>
         /// <returns>OK if the package exists or badrequest if not</returns>
-        [HttpGet("get-package-by-id/{id,packagerequest,cancellationToken}")]
+        [HttpGet("get/{id}")] 
         [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetPackageById(int id, [FromBody] PackageRequest packagerequest, CancellationToken cancellationToken)
         {
@@ -102,7 +102,7 @@ namespace ShipmentService.Api.Controllers
         /// <param name="packagerequest">the package that we want to get</param>
         /// <param name="cancellationToken">the cancellation token</param>
         /// <returns>OK if the package exists or badrequest if not</returns>
-        [HttpGet("get-package-by-dimensions/{dimensions,packagerequest,cancellationToken}")]
+        [HttpGet("get/{dimensions}")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetlocationByDimensions(string dimensions, [FromBody] PackageRequest packagerequest, CancellationToken cancellationToken)
         {
@@ -126,7 +126,7 @@ namespace ShipmentService.Api.Controllers
         /// <param name="packagerequest">the package that we want to get</param>
         /// <param name="cancellationToken">the cancellation token</param>
         /// <returns>OK if the package exists or badrequest if not</returns>
-        [HttpGet("get-package-by-ownerid/{ownerid,packagerequest,cancellationToken}")]
+        [HttpGet("get/{ownerid}")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetlocationByOwnerId(int ownerid, [FromBody] PackageRequest packagerequest, CancellationToken cancellationToken)
         {
@@ -150,7 +150,7 @@ namespace ShipmentService.Api.Controllers
         /// <param name="packagerequest">the package that we want to get</param>
         /// <param name="cancellationToken">the cancellation token</param>
         /// <returns>OK if the package exists or badrequest if not</returns>
-        [HttpGet("get-package-by-weight/{weight,packagerequest,cancellationToken}")]
+        [HttpGet("get/{weight}")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetlocationByWeight(decimal weight, [FromBody] PackageRequest packagerequest, CancellationToken cancellationToken)
         {
@@ -174,7 +174,7 @@ namespace ShipmentService.Api.Controllers
         /// <param name="locationRequest">The package that we have to update</param>
         /// <param name="CancellationTokenoken">the cancellation token</param>
         /// <returns>OK if the package has been updated and bad request if the package has not been updated</returns>
-        [HttpPut("update-package/{id,packagerequest,cancellationToken}")]
+        [HttpPut("update/{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> UpdateLocation(int id, [FromBody] PackageRequest packagerequest, CancellationToken CancellationToken)
@@ -198,7 +198,7 @@ namespace ShipmentService.Api.Controllers
         /// <param name="id">The id of the package</param>
         /// <param name="token">The token coming from the Http request</param>
         /// <returns>Ok if the package has been deleted and a bad request if the package has not been deleted</returns>
-        [HttpDelete("delete-package/{id,packagerequest,cancellationToken}")]
+        [HttpDelete("delete/{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> DeleteLocation(int id, [FromBody] PackageRequest packagerequest, CancellationToken CancellationToken) 
         {

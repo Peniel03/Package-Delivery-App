@@ -1,15 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using ShipmentService.DataAccess.DataContext;
 using ShipmentService.DataAccess.Interfaces;
 using ShipmentService.DataAccess.Models;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.Metrics;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace ShipmentService.DataAccess.Repositories
 {
@@ -20,19 +13,15 @@ namespace ShipmentService.DataAccess.Repositories
     {
         private readonly ShipmentContext _shipmentContext;
         private readonly DbSet<Location> _locations;
-        private readonly ILogger<Location> _logger;
 
         /// <summary>
         /// initialization of a new instance of <see cref="LocationRepository"/>
         /// </summary>
         /// <param name="shipmentContext">the database context</param>
-        /// <param name="logger">the logger</param>
-        public LocationRepository(ShipmentContext shipmentContext, ILogger<Location> logger)
+        public LocationRepository(ShipmentContext shipmentContext) 
         {
             _shipmentContext = shipmentContext;
-            _locations = _shipmentContext.Set<Location>();
-            _logger = logger;
-
+            _locations = _shipmentContext.Set<Location>(); 
         }
 
         /// <summary>
@@ -42,7 +31,6 @@ namespace ShipmentService.DataAccess.Repositories
         public void Add(Location location)
         {
             _locations.Add(location);
-            _logger.LogInformation($"The Location {location.LocationName} has been added to the database");
         }
 
         /// <summary>
@@ -52,7 +40,6 @@ namespace ShipmentService.DataAccess.Repositories
         public void Delete(Location location)
         {
             _locations.Remove(location);
-            _logger.LogInformation($"the location {location.LocationName} has been Deleted from the database");
         }
 
         /// <summary>
@@ -139,7 +126,6 @@ namespace ShipmentService.DataAccess.Repositories
         public void Update(Location location)
         {
             _locations.Update(location);
-            _logger.LogInformation($"The Location {location.LocationName} has been updated");
-         }
+        }
     }
 }

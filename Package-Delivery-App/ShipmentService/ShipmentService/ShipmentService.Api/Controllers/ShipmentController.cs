@@ -12,7 +12,7 @@ namespace ShipmentService.Api.Controllers
     /// <summary>
     /// the shipemnt controller
     /// </summary>
-    [Route("api/[controller]")]
+    [Route("api/packages/{packageId}/shipments")]
     [ApiController]
     public class ShipmentController : ControllerBase
     {
@@ -37,7 +37,7 @@ namespace ShipmentService.Api.Controllers
         /// <param name="shipmentrequest">The shiment that we want to create</param>
         /// <param name="CancellationToken">The cancellation token from the http request</param>
         /// <returns>OK if the shipment has been created or badrequest if not</returns>
-        [HttpPost("create-shipment/{shipmentrequest,CancellationToken}")]
+        [HttpPost("create/")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> CreateShipment([FromBody] ShipmentCreateRequest shipmentrequest, CancellationToken CancellationToken) 
@@ -57,7 +57,7 @@ namespace ShipmentService.Api.Controllers
         /// </summary>
         /// <param name="cancellationToken">the cancellation token</param>
         /// <returns>OK if the shipment exists or badrequest if not</returns>
-        [HttpGet("get-all-shipments/{cancellationToken}")]
+        [HttpGet("get-all/")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetAllShipments(CancellationToken cancellationToken)
         {
@@ -78,7 +78,7 @@ namespace ShipmentService.Api.Controllers
         /// <param name="shipmentrequest">the shipment that we want to get</param>
         /// <param name="cancellationToken">the cancellation token</param>
         /// <returns>OK if the shipment exists or badrequest if not</returns>
-        [HttpGet("get-shipemnt-by-id/{id,shipmentrequest,cancellationToken}")]
+        [HttpGet("get/{id}")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetShipmentById(int id, [FromBody] ShipmentCreateRequest shipmentrequest, CancellationToken cancellationToken) 
         {
@@ -102,7 +102,7 @@ namespace ShipmentService.Api.Controllers
         /// <param name="shipmentrequest">the shipment that we want to get</param> 
         /// <param name="cancellationToken">the cancellation token</param>
         /// <returns>OK if the shipment exists or badrequest if not</returns> 
-        [HttpGet("get-shipemnt-by-trackingnumber/{trackingnumber,shipmentrequest,cancellationToken}")]
+        [HttpGet("get/{trackingnumber}")] 
         [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetShipmentByTrackingNumber(string trackingnumber, [FromBody] ShipmentCreateRequest shipmentrequest, CancellationToken cancellationToken)
         {
@@ -114,7 +114,6 @@ namespace ShipmentService.Api.Controllers
             {
                 return BadRequest("This shipment does not exist");
             }
-
             return Ok(shipment); 
         }
 
@@ -126,7 +125,7 @@ namespace ShipmentService.Api.Controllers
         /// <param name="shipmentrequest">the shipment that we want to get</param>
         /// <param name="cancellationToken">the cancellation token</param>
         /// <returns>OK if the shipment exists or badrequest if not</returns>
-        [HttpGet("get-shipment-by-pickupdatetime/{pickupdatetime,shipmentrequest,cancellationToken}")]
+        [HttpGet("get/{pickupdatetime}")] 
         [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetShipmentByPickUpDateTime(DateTimeOffset pickupdatetime, [FromBody] ShipmentCreateRequest shipmentrequest, CancellationToken cancellationToken)
         {
@@ -150,7 +149,7 @@ namespace ShipmentService.Api.Controllers
         /// <param name="shipmentrequest">the shipment that we want to get</param>
         /// <param name="cancellationToken">the cancellation token</param>
         /// <returns>OK if the shipment exists or badrequest if not</returns>
-        [HttpGet("get-shipment-by-pickupdatetime/{actualdeliverydate,shipmentrequest,cancellationToken}")]
+        [HttpGet("get/{actualdeliverydate}")] 
         [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetShipmentByActualDeliveryDateTime(DateTimeOffset actualdeliverydate, [FromBody] ShipmentCreateRequest shipmentrequest, CancellationToken cancellationToken)
         {
@@ -173,7 +172,7 @@ namespace ShipmentService.Api.Controllers
         /// <param name="shipmentrequest">the shipment that we want to get</param>
         /// <param name="cancellationToken">the cancellation token</param>
         /// <returns>OK if the shipment exists or badrequest if not</returns>
-        [HttpGet("get-shipment-by-cost/{cost,shipmentrequest,cancellationToken}")]
+        [HttpGet("get/{cost}")] 
         [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetShipmentByCost(decimal cost, [FromBody] ShipmentCreateRequest shipmentrequest, CancellationToken cancellationToken)
         { 
@@ -195,7 +194,7 @@ namespace ShipmentService.Api.Controllers
         /// <param name="shipmentrequest">the shipment that we want to get</param>
         /// <param name="cancellationToken">the cancellation token</param>
         /// <returns>OK if the shipment exists or badrequest if not</returns>
-        [HttpGet("get-shipment-by-status/{status,shipmentrequest,cancellationToken}")]
+        [HttpGet("get/{status}")] 
         [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetShipmentByStatus(string status, [FromBody] ShipmentCreateRequest shipmentrequest, CancellationToken cancellationToken)
         {
@@ -219,7 +218,7 @@ namespace ShipmentService.Api.Controllers
         /// <param name="shipmentrequest">The shipment that we have to update</param>
         /// <param name="CancellationToken">the cancellation token</param>
         /// <returns>OK if the shipment has been updated and bad request if the shipment has not been updated</returns>
-        [HttpPut("update-shipment/{id,shipmentrequest,cancellationToken}")]
+        [HttpPut("update/{id}")] 
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> UpdateShipment(int id, [FromBody] ShipmentUpdateRequest shipmentrequest, CancellationToken CancellationToken)
@@ -243,7 +242,7 @@ namespace ShipmentService.Api.Controllers
         /// <param name="id">The id of the shipment</param>
         /// <param name="CancellationToken">The token coming from the Http request</param>
         /// <returns>Ok if the shipment has been deleted and a bad request if the shipment has not been deleted</returns>
-        [HttpDelete("delete-shipment/{id,shipmentrequest,cancellationToken}")]
+        [HttpDelete("delete/{id}")] 
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> DeleteShipment(int id, [FromBody] ShipmentCreateRequest shipmentrequest, CancellationToken CancellationToken)
         {

@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace ShipmentService.DataAccess.Migrations
 {
-    public partial class initialMigration : Migration
+    public partial class secondmigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -103,13 +103,13 @@ namespace ShipmentService.DataAccess.Migrations
                         column: x => x.PackageId,
                         principalTable: "Packages",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Shipments_Persons_RecipientId",
                         column: x => x.RecipientId,
                         principalTable: "Persons",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(

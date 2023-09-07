@@ -5,12 +5,7 @@ using ShipmentService.BusinessLogic.Exceptions;
 using ShipmentService.BusinessLogic.Interfaces;
 using ShipmentService.DataAccess.Interfaces;
 using ShipmentService.DataAccess.Models;
-using ShipmentService.DataAccess.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace ShipmentService.BusinessLogic.Services
 {
@@ -22,7 +17,7 @@ namespace ShipmentService.BusinessLogic.Services
 
         private readonly IPersonRepository _personRepository;
         private readonly IMapper _mapper;
-        private readonly ILogger<PersonService> _logger;
+        private readonly ILoggerManager _logger;
         private readonly ISaveChangesRepository _saveChangesRepository;
 
         /// <summary>
@@ -34,7 +29,7 @@ namespace ShipmentService.BusinessLogic.Services
         /// <param name="saveChangesRepository"></param>
         public PersonService(IPersonRepository personRepository,
             IMapper mapper,
-            ILogger<PersonService> logger,
+            ILoggerManager logger,
             ISaveChangesRepository saveChangesRepository)
         {
             _personRepository = personRepository;
@@ -67,11 +62,11 @@ namespace ShipmentService.BusinessLogic.Services
             try
             {
                 await _saveChangesRepository.SaveChangesAsync();
-                _logger.LogInformation("Changes successfully saved in the database");
+                _logger.LogInfo("Changes successfully saved in the database");
             }
             catch (Exception ex)
             {
-                _logger.LogInformation($"Error occured while adding a person{ex.Message}", ex);
+                _logger.LogError($"Error occured while adding a person{ex.Message}");
                 throw new ArgumentException($"Something went wrong while adding the person {ex.Message}");
             }
             return personDto;
@@ -98,7 +93,7 @@ namespace ShipmentService.BusinessLogic.Services
             {
                 _personRepository.Delete(mappedPerson);
                 await _saveChangesRepository.SaveChangesAsync();
-                _logger.LogInformation("Changes successfully saved in the database");
+                _logger.LogInfo("Changes successfully saved in the database");
             }
             catch (Exception ex)
             {
@@ -201,15 +196,13 @@ namespace ShipmentService.BusinessLogic.Services
             {
                 _personRepository.Update(mappedPerson);
                 await _saveChangesRepository.SaveChangesAsync();
-                _logger.LogInformation("Changes successfully saved in the database");
+                _logger.LogInfo("Changes successfully saved in the database");
             }
             catch (Exception ex)
             {
                 throw new ArgumentException($"Something went wrong while adding the person {ex.Message}");
             }
-
             return personDto; 
-        }
-
+        } 
     }
 }

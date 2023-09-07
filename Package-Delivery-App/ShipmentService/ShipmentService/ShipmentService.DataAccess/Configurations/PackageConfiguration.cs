@@ -32,8 +32,8 @@ namespace ShipmentService.DataAccess.Configurations
 
             builder.HasOne(x => x.Shipment)
                    .WithOne(x => x.Package)
-                   .HasForeignKey<Shipment>(x => x.PackageId);
-
+                   .HasForeignKey<Shipment>(x => x.PackageId)
+                   .OnDelete(DeleteBehavior.Restrict);
             builder.ToTable("Packages");
 
 

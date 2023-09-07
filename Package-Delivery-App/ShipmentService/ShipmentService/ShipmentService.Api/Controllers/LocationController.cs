@@ -13,7 +13,7 @@ namespace ShipmentService.Api.Controllers
     /// <summary>
     /// the location controller
     /// </summary>
-    [Route("api/[controller]")]
+    [Route("api/locations")]
     [ApiController]
     public class LocationController : ControllerBase
     {
@@ -38,7 +38,7 @@ namespace ShipmentService.Api.Controllers
         /// <param name="locationrequest">The location that we want to create</param>
         /// <param name="CancellationToken">The cancellation token from the http request</param>
         /// <returns>OK if the location has been created or badrequest if not</returns>
-        [HttpPost("create-location/{locationrequest,CancellationToken}")]
+        [HttpPost("create/")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> CreateLocation([FromBody] LocationRequest locationrequest, CancellationToken CancellationToken) 
@@ -58,7 +58,7 @@ namespace ShipmentService.Api.Controllers
         /// </summary>
         /// <param name="cancellationToken">the cancellation token</param>
         /// <returns>OK if the locations exist or Badrequest if not</returns>
-        [HttpGet("get-all-locations/{cancellationToken}")]
+        [HttpGet("get-all/")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetAllLocations(CancellationToken cancellationToken)
         {
@@ -79,7 +79,7 @@ namespace ShipmentService.Api.Controllers
         /// <param name="locationrequest">the location that we want to get</param>
         /// <param name="cancellationToken">the cancellation token</param>
         /// <returns>OK if the location exists or Badrequest if not</returns>
-        [HttpGet("get-location-by-id/{id,locationrequest,cancellationToken}")] 
+        [HttpGet("get/{id}")] 
         [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetlocationById(int id, [FromBody] LocationRequest locationrequest,CancellationToken cancellationToken)
         {
@@ -103,7 +103,7 @@ namespace ShipmentService.Api.Controllers
         /// <param name="locationrequest">the location that want to get</param>
         /// <param name="cancellationToken">the cancellation token</param>
         /// <returns>OK if the location exist or Badrequest if not</returns>
-        [HttpGet("get-location-by-address/{address,locationrequest,cancellationToken}")]
+        [HttpGet("get/{address}")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetlocationByAddress(string address ,[FromBody] LocationRequest locationrequest, CancellationToken cancellationToken)
         {
@@ -127,7 +127,7 @@ namespace ShipmentService.Api.Controllers
         /// <param name="locationrequest">the location that want to get</param>
         /// <param name="cancellationToken">the cancellation token</param>
         /// <returns>OK if the location exist or Badrequest if not</returns>
-        [HttpGet("get-location-by-city/{city,locationrequest,cancellationToken}")]
+        [HttpGet("get/{city}")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetlocationByCity(string city, [FromBody] LocationRequest locationrequest, CancellationToken cancellationToken)
         {
@@ -151,7 +151,7 @@ namespace ShipmentService.Api.Controllers
         /// <param name="locationrequest">the location that we want to get</param>
         /// <param name="cancellationToken">the cancellation token</param>
         /// <returns>OK if the location exist or Badrequest if not</returns>
-        [HttpGet("get-location-by-country/{country,locationrequest,cancellationToken}")]
+        [HttpGet("get/{country}")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetlocationByCountry(string country, [FromBody] LocationRequest locationrequest, CancellationToken cancellationToken)
         {
@@ -174,7 +174,7 @@ namespace ShipmentService.Api.Controllers
         /// <param name="locationrequest">the location that we want to get</param>
         /// <param name="cancellationToken">the cancellation token</param>
         /// <returns>OK if the location exist and bad request if the location does not exist</returns>
-        [HttpGet("get-location-by-postalcode/{postalcode,locationrequest,cancellationToken}")]
+        [HttpGet("get/{postalcode}")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetlocationByPostalCode(string postalcode, [FromBody] LocationRequest locationrequest, CancellationToken cancellationToken)
         {
@@ -187,9 +187,8 @@ namespace ShipmentService.Api.Controllers
                 return BadRequest("This location does not exist");
             }
 
-            return Ok(location);
+            return Ok(location); 
         }
-
 
         /// <summary>
         /// Function to update the location
@@ -198,7 +197,7 @@ namespace ShipmentService.Api.Controllers
         /// <param name="locationRequest">The location that we have to update</param>
         /// <param name="CancellationTokenoken">the cancellation token</param>
         /// <returns>OK if the location has been updated and bad request if the location has not been updated</returns>
-        [HttpPut("update-location/{id,locationrequest,cancellationToken}")]
+        [HttpPut("update/{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> UpdateLocation(int id, [FromBody] LocationRequest locationrequest, CancellationToken CancellationToken)
@@ -222,7 +221,7 @@ namespace ShipmentService.Api.Controllers
         /// <param name="id">The id of the location</param>
         /// <param name="token">The token coming from the Http request</param>
         /// <returns>Ok if the location has been deleted and a bad request if the location has not been deleted</returns>
-        [HttpDelete("delete-location/{id,locationrequest,cancellationToken}")]
+        [HttpDelete("delete/{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> DeleteLocation(int id, [FromBody] LocationRequest locationRequest, CancellationToken CancellationToken)
         {

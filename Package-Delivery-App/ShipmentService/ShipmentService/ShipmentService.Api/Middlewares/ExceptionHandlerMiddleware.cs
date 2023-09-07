@@ -1,4 +1,5 @@
 ﻿using ShipmentService.BusinessLogic.Exceptions;
+using ShipmentService.BusinessLogic.Interfaces;
 
 namespace ShipmentService.Api.Middlewares
 {
@@ -8,14 +9,14 @@ namespace ShipmentService.Api.Middlewares
     public class ExceptionHandlerMiddleware
     {
         private readonly RequestDelegate _next;
-        private  readonly ILogger _logger;
+        private  readonly ILoggerManager _logger;
 
         /// <summary>
         /// Initializes a new instance of <see cref="ExceptionHandlerMiddleware"/>
         /// </summary>
         /// <param name="next"></param>
         /// <param name="logger"></param>
-        public ExceptionHandlerMiddleware(RequestDelegate next, ILogger logger)
+        public ExceptionHandlerMiddleware(RequestDelegate next, ILoggerManager logger)
         {
             _next = next;
             _logger = logger;

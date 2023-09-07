@@ -1,16 +1,11 @@
 ﻿using AutoMapper;
-using Microsoft.Extensions.Logging;
 using ShipmentService.BusinessLogic.DTOs;
 using ShipmentService.BusinessLogic.Exceptions;
+using ShipmentService.BusinessLogic.Helpers;
 using ShipmentService.BusinessLogic.Interfaces;
 using ShipmentService.DataAccess.Interfaces;
 using ShipmentService.DataAccess.Models;
-using ShipmentService.DataAccess.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace ShipmentService.BusinessLogic.Services
 {
@@ -21,7 +16,7 @@ namespace ShipmentService.BusinessLogic.Services
     {
         private readonly IShipmentRepository _shipmentRepository;
         private readonly IMapper _mapper;
-        private readonly ILogger<ShipmentService> _logger;
+        private readonly ILoggerManager _logger;
         private readonly ISaveChangesRepository _saveChangesRepository;
 
         /// <summary>
@@ -33,7 +28,7 @@ namespace ShipmentService.BusinessLogic.Services
         /// <param name="saveChangesRepository"></param>
         public ShipmentService(IShipmentRepository shipmentRepository,
             IMapper mapper,
-            ILogger<ShipmentService> logger,
+           ILoggerManager logger,
             ISaveChangesRepository saveChangesRepository)
         {
             _shipmentRepository = shipmentRepository;    
@@ -60,17 +55,18 @@ namespace ShipmentService.BusinessLogic.Services
                 _logger.LogError("Error occured while shipment the package");
                 throw new AlreadyExistException("This shipment already exist");
             }
-
+            checkedShipement.TrackingNumber = ShipmentHelperFunctions.TrackingNumberGenerator();
+            checkedShipement.PickupDateTime = DateTimeOffset.UtcNow;
             _shipmentRepository.Add(checkedShipement);
 
             try
             {
                 await _saveChangesRepository.SaveChangesAsync();
-                _logger.LogInformation("Changes successfully saved in the database");
+                _logger.LogInfo("Changes successfully saved in the database");
             }
             catch (Exception ex)
             {
-                _logger.LogInformation($"Error occured while adding a shipment{ex.Message}", ex);
+                _logger.LogInfo($"Error occured while adding a shipment{ex.Message}");
                 throw new ArgumentException($"Something went wrong while adding the shipment {ex.Message}");
             }
             return shipmentDto; 
@@ -97,7 +93,7 @@ namespace ShipmentService.BusinessLogic.Services
             {
                 _shipmentRepository.Delete(mappedShipment);
                 await _saveChangesRepository.SaveChangesAsync();
-                _logger.LogInformation("Changes successfully saved in the database");
+                _logger.LogInfo("Changes successfully saved in the database");
             }
             catch (Exception ex)
             {
@@ -246,7 +242,7 @@ namespace ShipmentService.BusinessLogic.Services
             {
                 _shipmentRepository.Update(mappedShipement);
                 await _saveChangesRepository.SaveChangesAsync();
-                _logger.LogInformation("Changes successfully saved in the database");
+                _logger.LogInfo("Changes successfully saved in the database");
             }
             catch (Exception ex)
             {

@@ -12,8 +12,8 @@ using ShipmentService.DataAccess.DataContext;
 namespace ShipmentService.DataAccess.Migrations
 {
     [DbContext(typeof(ShipmentContext))]
-    [Migration("20230905065814_initialMigration")]
-    partial class initialMigration
+    [Migration("20230907003650_second-migration")]
+    partial class secondmigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -207,13 +207,13 @@ namespace ShipmentService.DataAccess.Migrations
                     b.HasOne("ShipmentService.DataAccess.Models.Package", "Package")
                         .WithOne("Shipment")
                         .HasForeignKey("ShipmentService.DataAccess.Models.Shipment", "PackageId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("ShipmentService.DataAccess.Models.Person", "Person")
                         .WithMany("shipments")
                         .HasForeignKey("RecipientId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Location");

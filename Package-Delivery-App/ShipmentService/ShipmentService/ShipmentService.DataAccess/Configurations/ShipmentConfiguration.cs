@@ -1,12 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using ShipmentService.DataAccess.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace ShipmentService.DataAccess.Configurations
 {
@@ -55,7 +50,15 @@ namespace ShipmentService.DataAccess.Configurations
             builder.Property(x => x.ShipmentStatus)
             .IsRequired(true);
 
+            //builder.OnDelete(DeleteBehavior.Cascade);
+
             builder.ToTable("Shipments");
         }
+
+        //public void CascadeDeleting(ModelBuilder modelBuilder)
+        //{
+        //    modelBuilder.Entity<Shipment>()
+        //    .OnDelete(DeleteBehavior.Cascade);
+        //}
     }
 }

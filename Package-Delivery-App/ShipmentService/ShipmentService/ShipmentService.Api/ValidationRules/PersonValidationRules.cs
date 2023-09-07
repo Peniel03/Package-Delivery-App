@@ -1,5 +1,4 @@
 ﻿using FluentValidation;
-using System.Runtime.CompilerServices;
 
 namespace ShipmentService.Api.ValidationRules
 {

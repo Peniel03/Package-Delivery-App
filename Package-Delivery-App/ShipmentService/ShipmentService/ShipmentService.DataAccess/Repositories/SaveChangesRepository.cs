@@ -1,10 +1,5 @@
 ﻿using ShipmentService.DataAccess.DataContext;
 using ShipmentService.DataAccess.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ShipmentService.DataAccess.Repositories
 {
@@ -33,6 +28,5 @@ namespace ShipmentService.DataAccess.Repositories
         {
             return _shipmentContext.SaveChangesAsync();
         }
-
     }
 }

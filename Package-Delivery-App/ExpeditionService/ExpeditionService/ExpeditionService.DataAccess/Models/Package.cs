@@ -15,7 +15,7 @@ namespace ExpeditionService.DataAccess.Models
         /// <summary>
         /// The id of the package
         /// </summary>
-        public int Id { get; set; }
+        public string Id { get; set; }
         /// <summary>
         /// the weight of the package
         /// </summary>

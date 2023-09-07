@@ -1,13 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using ShipmentService.DataAccess.DataContext;
 using ShipmentService.DataAccess.Interfaces;
 using ShipmentService.DataAccess.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace ShipmentService.DataAccess.Repositories
 {
@@ -18,18 +13,15 @@ namespace ShipmentService.DataAccess.Repositories
     {
         private readonly ShipmentContext _shipmentContext;
         private readonly DbSet<Package> _packages;
-        private readonly ILogger<Package> _logger;
 
         /// <summary>
         /// initialization of a new instance of <see cref="PackageRepository"/>
         /// </summary>
         /// <param name="shipmentContext">the database context</param>
-        /// <param name="logger">the logger </param>
-        public PackageRepository(ShipmentContext shipmentContext, ILogger<Package> logger)
+        public PackageRepository(ShipmentContext shipmentContext)
         {
-            _shipmentContext = shipmentContext;
+            _shipmentContext = shipmentContext; 
             _packages = _shipmentContext.Set<Package>();
-            _logger = logger;
         }
 
         /// <summary>
@@ -39,7 +31,6 @@ namespace ShipmentService.DataAccess.Repositories
         public void Add(Package package)
         {
             _packages.Add(package);
-            _logger.LogInformation($"The package {package} has been added to the database");
         }
 
         /// <summary>
@@ -49,7 +40,6 @@ namespace ShipmentService.DataAccess.Repositories
         public void Delete(Package package)
         {
             _packages.Add(package);
-            _logger.LogInformation($"The package {package} has been deleted from the database");
         }
 
         /// <summary>
@@ -124,7 +114,6 @@ namespace ShipmentService.DataAccess.Repositories
         public void Update(Package package)
         {
             _packages.Update(package);
-            _logger.LogInformation($"the package {package} has been updated  ");
         }
 
     }

@@ -1,15 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using ShipmentService.DataAccess.DataContext;
 using ShipmentService.DataAccess.Interfaces;
 using ShipmentService.DataAccess.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
+
 
 namespace ShipmentService.DataAccess.Repositories
 {
@@ -20,18 +13,15 @@ namespace ShipmentService.DataAccess.Repositories
     {
         private readonly ShipmentContext _shipmentContext;
         private readonly DbSet<Person> _persons;
-        private readonly ILogger<Person> _logger;
 
         /// <summary>
         /// initialization of a new instance of <see cref="PersonRepository"/>
         /// </summary>
         /// <param name="shipmentContext"></param>
-        /// <param name="logger"></param>
-        public PersonRepository(ShipmentContext shipmentContext, ILogger<Person> logger)
+        public PersonRepository(ShipmentContext shipmentContext)
         {
             _shipmentContext = shipmentContext;
             _persons = _shipmentContext.Set<Person>();
-            _logger = logger;
         }
 
         /// <summary>
@@ -41,7 +31,6 @@ namespace ShipmentService.DataAccess.Repositories
         public void Add(Person person)
         {
             _persons.Add(person);
-            _logger.LogInformation($"the person {person.Name} has been added to the database");
         }
 
         /// <summary>
@@ -51,7 +40,6 @@ namespace ShipmentService.DataAccess.Repositories
         public void Delete(Person person)
         {
             _persons.Remove(person);
-            _logger.LogInformation($"the person {person.Name} has been added to the database");
         }
 
         /// <summary>
@@ -112,7 +100,6 @@ namespace ShipmentService.DataAccess.Repositories
         public void Update(Person person)
         {
             _persons.Update(person);
-            _logger.LogInformation($"The person {person.Name} has been added");
         }
     }
 }

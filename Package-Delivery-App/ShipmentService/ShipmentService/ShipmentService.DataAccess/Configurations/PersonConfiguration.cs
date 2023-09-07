@@ -31,11 +31,15 @@ namespace ShipmentService.DataAccess.Configurations
 
             builder.HasMany(x => x.shipments)
                    .WithOne(x => x.Person)
-                   .HasForeignKey(x => x.SenderId);
+                   .HasForeignKey(x => x.SenderId)
+                   .OnDelete(DeleteBehavior.Restrict);
+
 
             builder.HasMany(x => x.shipments)
                    .WithOne(x => x.Person)
-                   .HasForeignKey(x => x.RecipientId);
+                   .HasForeignKey(x => x.RecipientId)
+                   .OnDelete(DeleteBehavior.Restrict);
+
 
             builder.ToTable("Persons");
 

@@ -12,7 +12,7 @@ namespace ShipmentService.Api.Controllers
     /// <summary>
     /// The person's controller
     /// </summary>
-    [Route("api/[controller]")]
+    [Route("api/persons")]
     [ApiController]
     public class PersonController : ControllerBase
     {
@@ -37,7 +37,7 @@ namespace ShipmentService.Api.Controllers
         /// <param name="personrequest">The person that we want to create</param>
         /// <param name="CancellationToken">The cancellation token from the http request</param>
         /// <returns>OK if the person has been created or badrequest if not</returns>
-        [HttpPost("create-person/{packagerequest,CancellationToken}")]
+        [HttpPost("create/")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> CreatePerson([FromBody] PersonRequest personrequest, CancellationToken CancellationToken)
@@ -57,7 +57,7 @@ namespace ShipmentService.Api.Controllers
         /// </summary>
         /// <param name="cancellationToken">the cancellation token</param>
         /// <returns>OK if the person exists or badrequest if not</returns>
-        [HttpGet("get-all-persons/{CancellationToken}")]
+        [HttpGet("get-all/")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetAllPersons(CancellationToken cancellationToken)
         {
@@ -78,7 +78,7 @@ namespace ShipmentService.Api.Controllers
         /// <param name="personrequest">the person that we want to get</param>
         /// <param name="cancellationToken">the cancellation token</param>
         /// <returns>OK if the person exists or badrequest if not</returns>
-        [HttpGet("get-person-by-id/{id,personrequest,cancellationToken}")]
+        [HttpGet("get/{id}")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetPersonById(int id, [FromBody] PersonRequest personrequest, CancellationToken cancellationToken)
         {
@@ -102,7 +102,7 @@ namespace ShipmentService.Api.Controllers
         /// <param name="packagerequest">the package that we want to get</param>
         /// <param name="cancellationToken">the cancellation token</param>
         /// <returns>OK if the package exists or badrequest if not</returns>
-        [HttpGet("get-person-by-name/{name,personrequest,cancellationToken}")]
+        [HttpGet("get/{name}")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetPersonByName(string name, [FromBody] PersonRequest personrequest, CancellationToken cancellationToken) 
         {
@@ -126,7 +126,7 @@ namespace ShipmentService.Api.Controllers
         /// <param name="personrequest">the person that we want to get</param>
         /// <param name="cancellationToken">the cancellation token</param>
         /// <returns>OK if the person exists or badrequest if not</returns>
-        [HttpGet("get-person-by-phonenumber/{phonenumber,personrequest,cancellationToken}")]
+        [HttpGet("get/{phonenumber}")] 
         [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetPersonByPhoneNumber(string phonenumber, [FromBody] PersonRequest personrequest, CancellationToken cancellationToken)
         {
@@ -151,7 +151,7 @@ namespace ShipmentService.Api.Controllers
         /// <param name="personrequest">The person that we have to update</param>
         /// <param name="CancellationTokenoken">the cancellation token</param>
         /// <returns>OK if the person has been updated and bad request if the package has not been updated</returns>
-        [HttpPut("update-person/{id,personrequest,CancellationToken}")]
+        [HttpPut("update/{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> UpdatePerson(int id, [FromBody] PersonRequest personrequest, CancellationToken CancellationToken)
@@ -175,7 +175,7 @@ namespace ShipmentService.Api.Controllers
         /// <param name="id">The id of the person</param>
         /// <param name="CancellationToken">The token coming from the Http request</param>
         /// <returns>Ok if the person has been deleted and a bad request if the person has not been deleted</returns>
-        [HttpDelete("delete-person/{id,personrequest,CancellationToken}")]
+        [HttpDelete("delete/{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> DeletePerson(int id, [FromBody] PersonRequest personrequest, CancellationToken CancellationToken)
         {
