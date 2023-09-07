@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ShipmentService.DataAccess.Models
+﻿namespace ShipmentService.DataAccess.Models
 {
     /// <summary>
     /// The Person who  will receive or send the package

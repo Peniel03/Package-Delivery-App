@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -7,15 +7,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="DTOs\" />
-    <Folder Include="Exceptions\" />
-    <Folder Include="Interfaces\" />
-    <Folder Include="Services\" />
+    <PackageReference Include="AutoMapper" Version="12.0.1" />
+    <PackageReference Include="MongoDB.Bson" Version="2.21.0" />
+    <PackageReference Include="MongoDB.Driver" Version="2.21.0" />
+    <PackageReference Include="MongoDbContext.Extensions.DependencyInjection" Version="1.0.2" />
+    <PackageReference Include="MongoFramework" Version="0.29.0" />
+    <PackageReference Include="NLog.Extensions.Logging" Version="5.3.4" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MongoDB.Bson" Version="2.21.0" />
-    <PackageReference Include="MongoDB.Driver" Version="2.21.0" />
+    <ProjectReference Include="..\ExpeditionService.DataAccess\ExpeditionService.DataAccess.csproj" />
   </ItemGroup>
 
 </Project>

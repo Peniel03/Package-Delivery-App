@@ -1,10 +1,4 @@
 ﻿using ShipmentService.BusinessLogic.DTOs;
-using ShipmentService.DataAccess.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ShipmentService.BusinessLogic.Interfaces
 {
@@ -16,42 +10,36 @@ namespace ShipmentService.BusinessLogic.Interfaces
         /// <summary>
         /// Function to get shipment by tracking number
         /// </summary>
-        /// <param name="shipmentDto">the entity that will help us to access the tracking number in the record 
-        /// where we want to get the shipment from</param>
-        /// <returns>A <see cref="Task"/>that contains <seealso cref="Shipment"/></returns>
-        Task<ShipmentDto> GetShipmentByTrackingNumberAsync(ShipmentDto shipmentDto, CancellationToken cancellationToken);
+        /// <param name="trackingnumber">the tracking number of the shipment that we want to get
+        /// <returns>A <see cref="Task"/>that contains <seealso cref="ShipmentDto"/></returns> 
+        Task<ShipmentDto> GetShipmentByTrackingNumberAsync(string trackingnumber, CancellationToken cancellationToken);
 
         /// <summary>
         /// Function to get shipment by pick up date
         /// </summary>
-        /// <param name="shipmentDto">the entity that will help us to access the pickup date in the record 
-        /// where we want to get the shipment from</param>
-        /// <returns>A <see cref="Task"/> that contains <seealso cref="Shipment"/></returns>
-        Task<ShipmentDto> GetShipmentByPickUpDateTimeAsync(ShipmentDto shipmentDto, CancellationToken cancellationToken);
+        /// <param name="pickupdatetime">the pickup datetime of the shipment that we want to get
+        /// <returns>A <see cref="Task"/> that contains <seealso cref="ShipmentDto"/></returns>
+        Task<ShipmentDto> GetShipmentByPickUpDateTimeAsync(DateTimeOffset pickupdatetime, CancellationToken cancellationToken);
 
         /// <summary>
         /// Function to get shipment by actual delivery date
         /// </summary>
-        /// <param name="shipmentDto">the entity that will help us to access the actual delivery date in the record 
-        /// where we want to get the shipment from</param>
-        /// <returns>A <see cref="Task"/> that contains <seealso cref="Shipment"/></returns>
-        Task<ShipmentDto> GetShipmentByActualDeliveryDateAsync(ShipmentDto shipmentDto, CancellationToken cancellationToken);
+        /// <param name="actualdeliverydate">the actual delivery date of the shipment that we want to get
+        /// <returns>A <see cref="Task"/> that contains <seealso cref="ShipmentDto"/></returns>
+        Task<ShipmentDto> GetShipmentByActualDeliveryDateAsync(DateTimeOffset actualdeliverydate, CancellationToken cancellationToken);
 
         /// <summary>
         /// Function to get shipment by cost
         /// </summary>
-        /// <param name="shipmentDto">the entity that will help us to access the cost in the record 
-        /// where we want to get the shipment from</param>
-        /// <returns>A <see cref="Task"/>that contains <seealso cref="Shipment"/></returns>
-        Task<ShipmentDto> GetShipmentByCostAsync(ShipmentDto shipmentDto, CancellationToken cancellationToken);
+        /// <param name="cost">the cost of the shipment that we want to get
+        /// <returns>A <see cref="Task"/>that contains <seealso cref="ShipmentDto"/></returns>
+        Task<ShipmentDto> GetShipmentByCostAsync(decimal cost, CancellationToken cancellationToken);
 
         /// <summary>
         /// Function to get shipment by status
         /// </summary>
-        /// <param name="shipmentDto">the entity that will help us to access the status in the record 
-        /// where we want to get the shipment from</param>
-        /// <returns>A <see cref="Task"/>that contains <seealso cref="Shipment"/> </returns>
-        Task<ShipmentDto> GetShipmentByStatusAsync(ShipmentDto shipmentDto, CancellationToken cancellationToken);
-         
+        /// <param name="status">the status of the shipment that we want to get 
+        /// <returns>A <see cref="Task"/>that contains <seealso cref="ShipmentDto"/> </returns>
+        Task<ShipmentDto> GetShipmentByStatusAsync(string status, CancellationToken cancellationToken); 
     }
 }

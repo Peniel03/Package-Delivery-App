@@ -50,6 +50,9 @@ namespace ShipmentService.DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.ToTable("Locations", (string)null);
@@ -205,13 +208,13 @@ namespace ShipmentService.DataAccess.Migrations
                     b.HasOne("ShipmentService.DataAccess.Models.Package", "Package")
                         .WithOne("Shipment")
                         .HasForeignKey("ShipmentService.DataAccess.Models.Shipment", "PackageId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("ShipmentService.DataAccess.Models.Person", "Person")
                         .WithMany("shipments")
                         .HasForeignKey("RecipientId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Location");

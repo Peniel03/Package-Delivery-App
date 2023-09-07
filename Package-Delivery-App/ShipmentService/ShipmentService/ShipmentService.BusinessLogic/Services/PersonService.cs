@@ -1,16 +1,9 @@
 ﻿using AutoMapper;
-using Microsoft.Extensions.Logging;
 using ShipmentService.BusinessLogic.DTOs;
 using ShipmentService.BusinessLogic.Exceptions;
 using ShipmentService.BusinessLogic.Interfaces;
 using ShipmentService.DataAccess.Interfaces;
 using ShipmentService.DataAccess.Models;
-using ShipmentService.DataAccess.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ShipmentService.BusinessLogic.Services
 {
@@ -19,10 +12,9 @@ namespace ShipmentService.BusinessLogic.Services
     /// </summary>
     public class PersonService : IPersonService
     {
-
         private readonly IPersonRepository _personRepository;
         private readonly IMapper _mapper;
-        private readonly ILogger<PersonService> _logger;
+        private readonly ILoggerManager _logger;
         private readonly ISaveChangesRepository _saveChangesRepository;
 
         /// <summary>
@@ -34,7 +26,7 @@ namespace ShipmentService.BusinessLogic.Services
         /// <param name="saveChangesRepository"></param>
         public PersonService(IPersonRepository personRepository,
             IMapper mapper,
-            ILogger<PersonService> logger,
+            ILoggerManager logger,
             ISaveChangesRepository saveChangesRepository)
         {
             _personRepository = personRepository;
@@ -54,24 +46,21 @@ namespace ShipmentService.BusinessLogic.Services
         public async Task<PersonDto> AddAsync(PersonDto personDto, CancellationToken cancellationToken)
         {
             var mappedPerson = _mapper.Map<Person>(personDto);
-            var checkedPerson = await _personRepository.GetById(mappedPerson.Id, cancellationToken);
-
+            var checkedPerson = await _personRepository.GetBySomethingAsync(x => x.Id == mappedPerson.Id, cancellationToken); 
             if (checkedPerson != null)
             {
                 _logger.LogError("Error occured while adding the person");
                 throw new AlreadyExistException("This person already exist");
             }
-
-            _personRepository.Add(mappedPerson);
-
+            _personRepository.AddAsync(mappedPerson);
             try
             {
                 await _saveChangesRepository.SaveChangesAsync();
-                _logger.LogInformation("Changes successfully saved in the database");
+                _logger.LogInfo("Changes successfully saved in the database");
             }
             catch (Exception ex)
             {
-                _logger.LogInformation($"Error occured while adding a person{ex.Message}", ex);
+                _logger.LogError($"Error occured while adding a person{ex.Message}");
                 throw new ArgumentException($"Something went wrong while adding the person {ex.Message}");
             }
             return personDto;
@@ -80,25 +69,26 @@ namespace ShipmentService.BusinessLogic.Services
         /// <summary>
         /// <inheritdoc/>
         /// </summary>
-        /// <param name="personDto"></param>
+        /// <param name="id">the id of the person that we want to delete</param>
         /// <param name="cancellationToken"></param>
         /// <exception cref="NotFoundException"></exception>
         /// <exception cref="ArgumentException"></exception>
         /// <returns>A <see cref="Task"/>that contains <seealso cref="PersonDto"/></returns>
-        public async Task<PersonDto> DeleteAsync(PersonDto personDto, CancellationToken cancellationToken)
+        public async Task<PersonDto> DeleteAsync(int id , CancellationToken cancellationToken)
         {
+            PersonDto personDto = new PersonDto();
             var mappedPerson = _mapper.Map<Person>(personDto);
-            var checkedPerson = await _personRepository.GetById(mappedPerson.Id, cancellationToken);
+            mappedPerson.Id = id;
+            var checkedPerson = await _personRepository.GetBySomethingAsync(x => x.Id == mappedPerson.Id, cancellationToken);
             if (checkedPerson == null)
             {
-                throw new NotFoundException("The person wasn't found");
+                throw new NotFoundException("The person wasn't found"); 
             }
-
             try
             {
-                _personRepository.Delete(mappedPerson);
+                _personRepository.DeleteAsync(mappedPerson);
                 await _saveChangesRepository.SaveChangesAsync();
-                _logger.LogInformation("Changes successfully saved in the database");
+                _logger.LogInfo("Changes successfully saved in the database");
             }
             catch (Exception ex)
             {
@@ -115,28 +105,48 @@ namespace ShipmentService.BusinessLogic.Services
         /// <returns>A <see cref="Task"/>that contains a list of <seealso cref="PersonDto"/></returns>
         public async Task<List<PersonDto>> GetAllAsync(CancellationToken cancellationToken)
         {
-            var list = await _personRepository.GetAll(cancellationToken);
+            var list = await _personRepository.GetAllAsync(cancellationToken);
             if (list == null)
             {
                 throw new NotFoundException("There no registered person yet");
             }
-
             var listDto = _mapper.Map<List<PersonDto>>(list);
-
             return listDto;
         }
 
         /// <summary>
         /// <inheritdoc/>
         /// </summary>
-        /// <param name="personDto">the person's data transfert object</param>
+        /// <param name="id">the id of the person that we want to getparam>
         /// <param name="cancellationToken">the cancellation token</param>
         /// <exception cref="NotFoundException">the not found exception</exception>
         /// <returns>A <see cref="Task"/>that contains <seealso cref="PersonDto"/></returns>
-        public async Task<PersonDto> GetByIdAsync(PersonDto personDto, CancellationToken cancellationToken)
+        public async Task<PersonDto> GetByIdAsync(int id, CancellationToken cancellationToken)
         {
+            PersonDto personDto = new PersonDto();
+            var mappedPerson = _mapper.Map<Person>(personDto);
+            mappedPerson.Id = id;
+            var checkedPerson = await _personRepository.GetBySomethingAsync(x => x.Id == mappedPerson.Id, cancellationToken);
+            if (checkedPerson == null) 
+            {
+                throw new NotFoundException("This person wasn't found");
+            }
+            return _mapper.Map<PersonDto>(checkedPerson);
+        }
+
+        /// <summary>
+        /// <inheritdoc/>
+        /// </summary>
+        /// <param name="name">the name of the person that we want to get</param>
+        /// <param name="cancellationToken">the cancellation token</param>
+        /// <exception cref="NotFoundException">the not found exception</exception>
+        /// <returns>A <see cref="Task"/>that contains <seealso cref="PersonDto"/> </returns>
+        public async Task<PersonDto> GetPersonByNameAsync(string name, CancellationToken cancellationToken)
+        {
+            PersonDto personDto = new PersonDto();
             var mappedPerson = _mapper.Map<Person>(personDto); 
-            var checkedPerson = await _personRepository.GetById(mappedPerson.Id, cancellationToken);
+            mappedPerson.Name = name;
+            var checkedPerson = await _personRepository.GetBySomethingAsync(x => x.Name == mappedPerson.Name, cancellationToken);
             if (checkedPerson == null)
             {
                 throw new NotFoundException("This person wasn't found");
@@ -147,37 +157,21 @@ namespace ShipmentService.BusinessLogic.Services
         /// <summary>
         /// <inheritdoc/>
         /// </summary>
-        /// <param name="personDto">the person's data transfert object</param>
+        /// <param name="phonenumber">the phonenumber of the person that we want to get</param>
         /// <param name="cancellationToken">the cancellation token</param>
         /// <exception cref="NotFoundException">the not found exception</exception>
         /// <returns>A <see cref="Task"/>that contains <seealso cref="PersonDto"/> </returns>
-        public async Task<PersonDto> GetPersonByNameAsync(PersonDto personDto, CancellationToken cancellationToken)
+        public async Task<PersonDto> GetPersonByPhoneNumberAsync(string phonenumber, CancellationToken cancellationToken)
         {
+            PersonDto personDto = new PersonDto();
             var mappedPerson = _mapper.Map<Person>(personDto);
-            var checkedPerson = await _personRepository.GetPersonByName(mappedPerson.Name, cancellationToken);
+            mappedPerson.Phone = phonenumber;
+            var checkedPerson = await _personRepository.GetBySomethingAsync(x => x.Phone == mappedPerson.Phone, cancellationToken);
             if (checkedPerson == null)
             {
                 throw new NotFoundException("This person wasn't found");
             }
-            return _mapper.Map<PersonDto>(checkedPerson);
-        }
-
-        /// <summary>
-        /// <inheritdoc/>
-        /// </summary>
-        /// <param name="personDto">the person's data transfert object</param>
-        /// <param name="cancellationToken">the cancellation token</param>
-        /// <exception cref="NotFoundException">the not found exception</exception>
-        /// <returns>A <see cref="Task"/>that contains <seealso cref="PersonDto"/> </returns>
-        public async Task<PersonDto> GetPersonByPhoneNumberAsync(PersonDto personDto, CancellationToken cancellationToken)
-        {
-            var mappedPerson = _mapper.Map<Person>(personDto);
-            var checkedPerson = await _personRepository.GetPersonByPhoneNumber(mappedPerson.Phone, cancellationToken);
-            if (checkedPerson == null)
-            {
-                throw new NotFoundException("This person wasn't found");
-            }
-            return _mapper.Map<PersonDto>(checkedPerson);
+            return _mapper.Map<PersonDto>(checkedPerson); 
         }
 
 
@@ -192,24 +186,22 @@ namespace ShipmentService.BusinessLogic.Services
         public async Task<PersonDto> UpdateAsync(PersonDto personDto, CancellationToken cancellationToken)
         {
             var mappedPerson = _mapper.Map<Person>(personDto);
-            var checkedPerson = await _personRepository.GetById(mappedPerson.Id, cancellationToken);
+            var checkedPerson = await _personRepository.GetBySomethingAsync(x => x.Id == mappedPerson.Id, cancellationToken);
             if (checkedPerson == null)
             {
-                throw new NotFoundException("This person wasn't found"); 
+                throw new NotFoundException("This person wasn't found");  
             }
             try
             {
-                _personRepository.Update(mappedPerson);
+                _personRepository.UpdateAsync(mappedPerson);
                 await _saveChangesRepository.SaveChangesAsync();
-                _logger.LogInformation("Changes successfully saved in the database");
+                _logger.LogInfo("Changes successfully saved in the database");
             }
             catch (Exception ex)
             {
                 throw new ArgumentException($"Something went wrong while adding the person {ex.Message}");
             }
-
             return personDto; 
-        }
-
+        } 
     }
 }

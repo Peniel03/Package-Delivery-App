@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using ShipmentService.Api.Request;
 using ShipmentService.BusinessLogic.DTOs;
 using ShipmentService.DataAccess.Models;
 
@@ -17,13 +16,6 @@ namespace ShipmentService.Api.Mapping.Profiles
         {
             CreateMap<ShipmentDto, Shipment>()
                  .ReverseMap();
-
-            CreateMap<ShipmentCreateRequest, ShipmentDto>()
-                    .ReverseMap();
-
-            CreateMap<ShipmentUpdateRequest, ShipmentDto>()
-                   .ReverseMap();
-
         }
     }
 }

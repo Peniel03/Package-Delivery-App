@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using ShipmentService.Api.Request;
 using ShipmentService.BusinessLogic.DTOs;
 using ShipmentService.DataAccess.Models;
 
@@ -16,8 +15,6 @@ namespace ShipmentService.Api.Mapping.Profiles
         public LocationProfile()
         {
             CreateMap<LocationDto, Location>()
-                .ReverseMap();
-            CreateMap<LocationRequest, LocationDto>()
                 .ReverseMap();
         }
     }

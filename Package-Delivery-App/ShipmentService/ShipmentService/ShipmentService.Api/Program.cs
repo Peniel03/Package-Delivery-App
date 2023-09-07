@@ -1,16 +1,15 @@
+using NLog;
 using ShipmentService.Api.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
-
+LogManager.Setup().LoadConfigurationFromFile("nlog.config");
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.ConfigureServicesApplication(builder.Configuration);
-
+builder.Services.ConfigureMassTransit();
 var app = builder.Build();
 app.Configure();
+
 
  

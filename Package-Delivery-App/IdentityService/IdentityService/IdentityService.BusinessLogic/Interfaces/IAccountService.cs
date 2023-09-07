@@ -26,7 +26,7 @@ namespace IdentityService.BusinessLogic.Interfaces
         /// <param name="user">the user that we want to get</param>
         /// <param name="cancellationToken">the cancellation token</param>
         /// <returns>A <see cref="Task"/>that contains a <seealso cref="UserDto"/></returns>
-        Task<UserDto> GetUserByIdAsync(UserDto user, CancellationToken cancellationToken);
+        Task<UserDto> GetUserByIdAsync(int id, CancellationToken cancellationToken);
 
         /// <summary>
         /// function to get all users
@@ -40,17 +40,7 @@ namespace IdentityService.BusinessLogic.Interfaces
         /// </summary>
         /// <param name="user">The user that we want to delete</param>
         /// <returns>A <see cref="Task"/> that contains a <see cref="UserDto"/></returns>
-        Task<UserDto> DeleteUserAsync(UserDto user);
-
-        /// <summary>
-        /// Function to reset the password of the user
-        /// </summary>
-        /// <param name="user">The user for whom we want to reset the password</param>
-        /// <param name="password">The password</param>
-        /// <param name="newPassword">The new password</param>
-        /// <returns>A <see cref="Task"/> that contains true if the password has been
-        /// reseted and false in other cases</returns></returns>
-        Task<bool> ResetPasswordAsync(UserDto user, string password, string newPassword);
+        Task<DeleteUserDto> DeleteUserAsync(int id);
 
         /// <summary>
         /// Function to update the password of the user
@@ -60,7 +50,7 @@ namespace IdentityService.BusinessLogic.Interfaces
         /// <param name="newPassword">The new password of the user</param>
         /// <returns>A <see cref="Task"/> That contains true if the password has been
         /// updated and false in other cases</returns></returns>
-        Task<bool> UpdatePasswordAsync(UserDto user, string oldPassword, string newPassword);
+        Task<bool> UpdatePasswordAsync(UserUpdatePasswordDto user, string oldPassword, string newPassword);
 
         /// <summary>
         /// Function to update the user

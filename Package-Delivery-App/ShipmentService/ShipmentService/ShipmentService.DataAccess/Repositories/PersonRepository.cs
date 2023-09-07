@@ -1,15 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using ShipmentService.DataAccess.DataContext;
 using ShipmentService.DataAccess.Interfaces;
 using ShipmentService.DataAccess.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
+using System.Linq.Expressions;
 
 namespace ShipmentService.DataAccess.Repositories
 {
@@ -20,38 +13,33 @@ namespace ShipmentService.DataAccess.Repositories
     {
         private readonly ShipmentContext _shipmentContext;
         private readonly DbSet<Person> _persons;
-        private readonly ILogger<Person> _logger;
 
         /// <summary>
         /// initialization of a new instance of <see cref="PersonRepository"/>
         /// </summary>
         /// <param name="shipmentContext"></param>
-        /// <param name="logger"></param>
-        public PersonRepository(ShipmentContext shipmentContext, ILogger<Person> logger)
+        public PersonRepository(ShipmentContext shipmentContext)
         {
             _shipmentContext = shipmentContext;
             _persons = _shipmentContext.Set<Person>();
-            _logger = logger;
         }
 
         /// <summary>
         /// <inheritdoc/>
         /// </summary>
         /// <param name="person">the person that we want to add</param>
-        public void Add(Person person)
+        public void AddAsync(Person person)
         {
             _persons.Add(person);
-            _logger.LogInformation($"the person {person.Name} has been added to the database");
         }
 
         /// <summary>
         /// <inheritdoc/>
         /// </summary>
         /// <param name="person">the person that we want to delete</param>
-        public void Delete(Person person)
+        public void DeleteAsync(Person person)
         {
             _persons.Remove(person);
-            _logger.LogInformation($"the person {person.Name} has been added to the database");
         }
 
         /// <summary>
@@ -59,60 +47,43 @@ namespace ShipmentService.DataAccess.Repositories
         /// </summary>
         /// <param name="cancellationToken"></param>
         /// <returns>A <see cref="Task"/> taht contains a List of <seealso cref="Person"/> </returns>
-        public Task<List<Person>> GetAll(CancellationToken cancellationToken)
+        public async Task<List<Person>> GetAllAsync(CancellationToken cancellationToken)
         {
-            return _persons
+            return await _persons
                 .AsNoTracking()
                 .ToListAsync(cancellationToken);
-        }
-        
-        /// <summary>
-        /// <inheritdoc/>
-        /// </summary>
-        /// <param name="id">the id of the user that wew want to weekend</param>
-        /// <param name="cancellationToken">the cancellation token</param>
-        /// <returns> a <see cref="Task"/> that contains <seealso cref="Person"/></returns>
-        public Task<Person> GetById(int id, CancellationToken cancellationToken)
-        {
-            return _persons
-                .AsNoTracking()
-                .FirstOrDefaultAsync(x => x.Id == id , cancellationToken);
-        }
-        
-        /// <summary>
-        /// <inheritdoc/>
-        /// </summary>
-        /// <param name="name">the name of the persin that we want to get</param>
-        /// <param name="cancellationToken">the cancellation robuste</param>
-        /// <returns>A <see cref="Task"/> that contains <seealso cref="Person"/></returns>
-        public Task<Person> GetPersonByName(string name, CancellationToken cancellationToken)
-        {
-            return _persons
-               .AsNoTracking()
-               .FirstOrDefaultAsync(x => x.Name == name, cancellationToken);
         }
 
         /// <summary>
         /// <inheritdoc/>
         /// </summary>
-        /// <param name="phone">the phone number of the user that we want to get</param>
-        /// <param name="cancellationToken">the cancellation token</param>
-        /// <returns>A <see cref="Task"/> that contains <seealso cref="Person"/></returns>
-        public Task<Person> GetPersonByPhoneNumber(string phone, CancellationToken cancellationToken)
+        /// <param name="predicate"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        public async Task<Person> GetBySomethingAsync(Func<Person, bool> predicate, CancellationToken cancellationToken)
         {
-            return _persons
-                          .AsNoTracking()
-                          .FirstOrDefaultAsync(x => x.Phone == phone, cancellationToken);
+            var query = _persons.AsQueryable(); 
+            foreach (var propertyInfo in typeof(Person).GetProperties())
+            {
+                var parameter = Expression.Parameter(typeof(Person), "x");
+                var propertyAccess = Expression.Property(parameter, propertyInfo);
+                var value = Expression.Constant(propertyInfo.GetValue(predicate.Target));
+                var condition = Expression.Equal(propertyAccess, value);
+                var lambda = Expression.Lambda<Func<Person, bool>>(condition, parameter);
+                query = query.Where(lambda);
+            }
+            return await query
+                .AsNoTracking()
+                .FirstOrDefaultAsync(cancellationToken); 
         }
 
         /// <summary>
         /// <inheritdoc/>
         /// </summary>
         /// <param name="person">the person that we want to update</param>
-        public void Update(Person person)
+        public void UpdateAsync(Person person)
         {
             _persons.Update(person);
-            _logger.LogInformation($"The person {person.Name} has been added");
         }
     }
 }

@@ -1,0 +1,34 @@
+version: '3.4'
+
+networks:
+  packagedelivery_shipmentservice: 
+
+services:
+  packagedelivery_shipmentservice_db:
+        container_name: shipment-db
+        image: mcr.microsoft.com/mssql/server:2017-latest
+        ports:
+        - 8082:1433
+        environment:
+        - ACCEPT_EULA=Y
+        - SA_PASSWORD=penielpasword12
+        networks: 
+          - packagedelivery_shipmentservice
+  shipmentservice.api:
+    container_name: packagedelivery-shipmentservice
+    image: ${DOCKER_REGISTRY-}shipmentserviceapi
+    build:
+      context: .
+      dockerfile: ShipmentService.Api/Dockerfile
+    ports:
+      - 8081:80
+    # depends_on:
+    #   - packagedelivery_shipmentservice_db
+    # environment:
+    # - DB_HOST=packagedelivery_shipmentservice_db
+    # - DB_NAME=PackageDelivery-shipmentService
+    # - DB_SA_PASSWORD=penielpasword12
+      - CONNECTIONSTRINGS__DEFAULTCONNECTION=Server=shipment-db;Database=ShipmentService;User=sa;Password=Peniel_pasword12;Encrypt=false;
+
+    networks:
+    - packagedelivery_shipmentservice

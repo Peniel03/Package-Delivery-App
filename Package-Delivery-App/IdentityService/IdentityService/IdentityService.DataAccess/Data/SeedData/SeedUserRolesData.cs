@@ -27,9 +27,8 @@ namespace IdentityService.DataAccess.Data.SeedData
         /// <summary>
         /// Function add seed data 
         /// </summary>
-        public void SeedData()
+        public async void SeedData()
         {
-
             if (_roleManager.Roles is not null)
             {
                 return;
@@ -38,19 +37,16 @@ namespace IdentityService.DataAccess.Data.SeedData
             {
                 try
                 {
-                      foreach (var role in UserRoleTypes.RolesTypes)
-                        {
-                            _roleManager.CreateAsync(new UserRole(role));
-                        }
-                    
+                    foreach (var role in UserRoleTypes.RolesTypes)
+                    {
+                        await _roleManager.CreateAsync(new UserRole(role));
+                    }
                 }
                 catch (NotSupportedException ex)
                 {
                     throw ex;
                 }
             }
-            
         }
-
     }
 }

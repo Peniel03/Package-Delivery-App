@@ -1,7 +1,6 @@
 ﻿using ShipmentService.DataAccess.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
- 
 
 namespace ShipmentService.DataAccess.Configurations
 {
@@ -19,7 +18,6 @@ namespace ShipmentService.DataAccess.Configurations
             builder.HasKey(x => x.Id);
             builder.Property(i => i.Id)
                 .ValueGeneratedOnAdd();
-
             builder.Property(x => x.LocationName)
                 .IsRequired(true);
             builder.Property(x => x.Address)
@@ -30,22 +28,16 @@ namespace ShipmentService.DataAccess.Configurations
                .IsRequired(true);
             builder.Property(x => x.PostalCode)
                .IsRequired(true);
-
             builder.HasMany(x => x.Persons)
                    .WithOne(x => x.Location)
                    .HasForeignKey(x => x.LocationId);
-
-
             builder.HasMany(x => x.Shipements)
                    .WithOne(x => x.Location)
                    .HasForeignKey(x => x.PickUpLocationId);
-
             builder.HasMany(x => x.Shipements)
                    .WithOne(x => x.Location)
                    .HasForeignKey(x => x.DestinationLocationId);
-
             builder.ToTable("Locations");
-
         }
     }
 }

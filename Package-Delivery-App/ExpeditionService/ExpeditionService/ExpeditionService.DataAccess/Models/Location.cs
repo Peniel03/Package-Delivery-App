@@ -1,13 +1,11 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ExpeditionService.DataAccess.Models
 {
+    /// <summary>
+    /// the llocation class
+    /// </summary>
     public class Location
     {
         [BsonId]
@@ -15,7 +13,7 @@ namespace ExpeditionService.DataAccess.Models
         /// <summary>
         /// The Location id
         /// </summary>
-        public string Id { get; set; }
+        public string Id { get; set; } 
 
         /// <summary>
         /// The location name 

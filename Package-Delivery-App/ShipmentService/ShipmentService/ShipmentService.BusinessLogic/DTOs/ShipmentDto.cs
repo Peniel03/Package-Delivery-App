@@ -1,9 +1,4 @@
 ﻿using ShipmentService.DataAccess.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ShipmentService.BusinessLogic.DTOs
 {
@@ -12,7 +7,6 @@ namespace ShipmentService.BusinessLogic.DTOs
     /// </summary>
     public class ShipmentDto
     {
-
         /// <summary>
         /// the shipment id
         /// </summary>
@@ -97,6 +91,5 @@ namespace ShipmentService.BusinessLogic.DTOs
         /// the id of the user or employee that will register the shipment
         /// </summary>
         public int UserId { get; set; }
-
     }
 }

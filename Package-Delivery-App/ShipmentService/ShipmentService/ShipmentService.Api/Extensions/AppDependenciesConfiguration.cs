@@ -1,7 +1,6 @@
 ﻿using System.Text.Json;
 using System.Text;
 using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using ShipmentService.BusinessLogic.Interfaces;
 using ShipmentService.BusinessLogic.Services;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
@@ -9,14 +8,17 @@ using ShipmentService.Api.Mapping.Profiles;
 using ShipmentService.Api.Validators;
 using ShipmentService.DataAccess.Extensions;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using System.Reflection;
-using AutoMapper;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using ShipmentService.BusinessLogic.Logger;
+using MassTransit;
 
 namespace ShipmentService.Api.Extensions
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public static partial class AppDependenciesConfiguration
     {
         /// <summary>
@@ -27,28 +29,56 @@ namespace ShipmentService.Api.Extensions
         /// <returns></returns>
         /// <param name="configuration"></param>
         /// <returns></returns>
-        public static  WebApplicationBuilder ConfigureServicesApplication(this WebApplicationBuilder builder, IConfiguration configuration)
+        public static  IServiceCollection ConfigureServicesApplication(this WebApplicationBuilder builder, IConfiguration configuration)
         {
-
-
+            var dbHost = Environment.GetEnvironmentVariable("DB_HOST");
+            var dbName = Environment.GetEnvironmentVariable("DB_NAME");
+            var dbPassword = Environment.GetEnvironmentVariable("DB_SA_PASSWORD");
             builder.Services
                 .AddShipmentDbContext(options =>
                 {
                     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+                      // .Replace("{DB_HOST}", dbHost));
                 })
-
-
                 .AddRepositories()
                 .AddAutoMapper(Assembly.GetAssembly(typeof(PersonProfile)))
                 .AddScoped<IPersonService, PersonService>()
                 .AddScoped<ILocationService, LocationService>()
                 .AddScoped<IPackageService, PackageService>()
-                //.AddHealthCheck(builder.Configuration)           
+                .AddScoped<IShipmentService, ShipmentServices>()
+                .AddSingleton<ILoggerManager, LoggerManager>()
                 .AddValidatorsFromAssemblyContaining<ShipmentCreateValidator>()
-                .AddFluentValidationAutoValidation();
-                                    
+                .AddFluentValidationAutoValidation()
+                .AddExceptionHandler(options => {
+                 options.ExceptionHandlingPath = "/Error";
+             });
 
-            return builder;
+            return builder.Services; 
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="configuration"></param>
+        /// <returns></returns>
+        public static IServiceCollection ConfigureMassTransit(this IServiceCollection services)
+        {
+            services.AddMassTransit(x =>
+            {
+                // x.AddConsumer<>();
+                // x.AddConsumer<>();
+                x.UsingRabbitMq((context, cfg) =>
+                {
+                    cfg.Host("rabbitmq://localhost/", h =>
+                    {
+                        h.Username("guest");
+                        h.Password("guest");
+                    });
+                    cfg.ConfigureEndpoints(context); 
+                });
+            });
+            return services;
         }
 
         /// <summary>
@@ -58,7 +88,6 @@ namespace ShipmentService.Api.Extensions
         public static void Configure(this WebApplication app)
         {
             app.UseMiddleware<ExceptionHandlerMiddleware>();
-
             //app.MapHealthChecks("/health", new HealthCheckOptions()
             //{
             //    Predicate = (check) => !check.Tags.Contains("services"),
@@ -69,15 +98,17 @@ namespace ShipmentService.Api.Extensions
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
+                app.UseDeveloperExceptionPage();
             }
-
+            else
+            {
+                app.UseExceptionHandler("/Home/Error");
+                app.UseHsts();
+            }
             app.UseHttpsRedirection();
             app.UseAuthentication();
-
             app.UseAuthorization();
-
             app.MapControllers();
-
             app.Run();
         }
 
@@ -90,12 +121,10 @@ namespace ShipmentService.Api.Extensions
         private static Task WriteResponse(HttpContext context, HealthReport result)
         {
             context.Response.ContentType = "application/json; charset=utf-8";
-
             var options = new JsonWriterOptions
             {
                 Indented = true
             };
-
             using var stream = new MemoryStream();
             using (var writer = new Utf8JsonWriter(stream, options))
             {
@@ -111,12 +140,8 @@ namespace ShipmentService.Api.Extensions
                 writer.WriteEndObject();
                 writer.WriteEndObject();
             }
-
             var json = Encoding.UTF8.GetString(stream.ToArray());
-
             return context.Response.WriteAsync(json);
         }
-
-  
     }
 }

@@ -1,15 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using ShipmentService.DataAccess.DataContext;
 using ShipmentService.DataAccess.Interfaces;
 using ShipmentService.DataAccess.Models;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.Metrics;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
+using System.Linq.Expressions;
 
 namespace ShipmentService.DataAccess.Repositories
 {
@@ -20,39 +13,33 @@ namespace ShipmentService.DataAccess.Repositories
     {
         private readonly ShipmentContext _shipmentContext;
         private readonly DbSet<Location> _locations;
-        private readonly ILogger<Location> _logger;
 
         /// <summary>
         /// initialization of a new instance of <see cref="LocationRepository"/>
         /// </summary>
         /// <param name="shipmentContext">the database context</param>
-        /// <param name="logger">the logger</param>
-        public LocationRepository(ShipmentContext shipmentContext, ILogger<Location> logger)
+        public LocationRepository(ShipmentContext shipmentContext) 
         {
             _shipmentContext = shipmentContext;
-            _locations = _shipmentContext.Set<Location>();
-            _logger = logger;
-
+            _locations = _shipmentContext.Set<Location>(); 
         }
 
         /// <summary>
         /// <inheritdoc/>
         /// </summary>
         /// <param name="location">the location that we want to add</param>
-        public void Add(Location location)
+        public void AddAsync(Location location)
         {
             _locations.Add(location);
-            _logger.LogInformation($"The Location {location.LocationName} has been added to the database");
         }
 
         /// <summary>
         /// <inheritdoc/>
         /// </summary>
         /// <param name="location">the location that we want to delete</param>
-        public void Delete(Location location)
+        public void DeleteAsync(Location location)
         {
             _locations.Remove(location);
-            _logger.LogInformation($"the location {location.LocationName} has been Deleted from the database");
         }
 
         /// <summary>
@@ -60,9 +47,9 @@ namespace ShipmentService.DataAccess.Repositories
         /// </summary>
         /// <param name="cancellationToken">the cancellation token</param>
         /// <returns>A <see cref="Task"/> that contains a list of <seealso cref="Location"/></returns>
-        public Task<List<Location>> GetAll(CancellationToken cancellationToken)
+        public async Task<List<Location>> GetAllAsync(CancellationToken cancellationToken)
         {
-            return _locations
+            return await _locations
                 .AsNoTracking()
                 .ToListAsync(cancellationToken);
         }
@@ -70,76 +57,33 @@ namespace ShipmentService.DataAccess.Repositories
         /// <summary>
         /// <inheritdoc/>
         /// </summary>
-        /// <param name="id">the id of the location</param>
-        /// <param name="cancellationToken">the cancellation token</param>
-        /// <returns>A <see cref="Task"/> that contains <seealso cref="Location"/></returns>
-        public Task<Location> GetById(int id, CancellationToken cancellationToken)
+        /// <param name="predicate"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        public async Task<Location> GetBySomethingAsync(Func<Location, bool> predicate, CancellationToken cancellationToken)
         {
-            return _locations
+            var query = _locations.AsQueryable();
+            foreach (var propertyInfo in typeof(Location).GetProperties())
+            {
+                var parameter = Expression.Parameter(typeof(Location), "x");
+                var propertyAccess = Expression.Property(parameter, propertyInfo);
+                var value = Expression.Constant(propertyInfo.GetValue(predicate.Target));
+                var condition = Expression.Equal(propertyAccess, value);
+                var lambda = Expression.Lambda<Func<Location, bool>>(condition, parameter);
+                query = query.Where(lambda);
+            } 
+            return await query
                 .AsNoTracking()
-                .FirstOrDefaultAsync(x => x.Id == id , cancellationToken);
-        }
-
-        /// <summary>
-        /// <inheritdoc/>
-        /// </summary>
-        /// <param name="address">the adress of the location</param>
-        /// <param name="cancellationToken">the cancellation token</param>
-        /// <returns>A <see cref="Task"/>that contains <seealso cref="Location"/></returns>
-        public Task<Location> GetLocationByAddress(string address, CancellationToken cancellationToken)
-        {
-            return _locations
-                 .AsNoTracking()
-                 .FirstOrDefaultAsync(x => x.Address == address, cancellationToken);
-        }
-
-        /// <summary>
-        /// <inheritdoc/>
-        /// </summary>
-        /// <param name="city">the city of the location</param>
-        /// <param name="cancellationToken">the cancellation token</param>
-        /// <returns>A <see cref="Task"/>that contains <seealso cref="Location"/></returns>
-        public Task<Location> GetLocationByCity(string city, CancellationToken cancellationToken)
-        {
-            return _locations
-              .AsNoTracking()
-              .FirstOrDefaultAsync(x => x.City == city, cancellationToken);
-        }
-
-        /// <summary>
-        /// <inheritdoc/>
-        /// </summary>
-        /// <param name="country">the contry of the location</param>
-        /// <param name="cancellationToken">the cancellation token</param>
-        /// <returns>A <see cref="Task"/> that contains <seealso cref="Location"/></returns>
-        public Task<Location> GetLocationByCountry(string country, CancellationToken cancellationToken)
-        {
-            return _locations
-                .AsNoTracking()
-                .FirstOrDefaultAsync(x => x.Country == country, cancellationToken);
-        }
-
-        /// <summary>
-        /// <inheritdoc/>
-        /// </summary>
-        /// <param name="postalCode">the postal code of the location</param>
-        /// <param name="cancellationToken">the cancellation token</param>
-        /// <returns> A <see cref="Task"/>That contains <seealso cref="Location"/></returns>
-        public Task<Location> GetLocationByPostalCode(string postalCode, CancellationToken cancellationToken)
-        {
-            return _locations
-               .AsNoTracking()
-               .FirstOrDefaultAsync(x => x.PostalCode == postalCode, cancellationToken);
-        }
+                .FirstOrDefaultAsync(cancellationToken);
+        } 
 
         /// <summary>
         /// <inheritdoc/>
         /// </summary>
         /// <param name="location">the location that we want to update</param>
-        public void Update(Location location)
+        public void UpdateAsync(Location location)
         {
             _locations.Update(location);
-            _logger.LogInformation($"The Location {location.LocationName} has been updated");
-         }
+        }
     }
 }

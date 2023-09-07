@@ -1,11 +1,5 @@
 ﻿using IdentityService.BusinessLogic.Interfaces;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using NLog;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace IdentityService.BusinessLogic.Logger
 {

@@ -16,6 +16,5 @@ namespace IdentityService.Api.Validators
             RuleFor(x => x.Password)
                 .PasswordValidation();
         }
-
     }
 }

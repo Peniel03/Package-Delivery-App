@@ -1,13 +1,7 @@
 ﻿using AutoMapper;
-using IdentityService.Api.Request;
 using IdentityService.BusinessLogic.DTOs;
 using IdentityService.BusinessLogic.Interfaces;
-using IdentityService.DataAccess.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace IdentityService.Api.Controllers
 {
@@ -18,21 +12,37 @@ namespace IdentityService.Api.Controllers
     [ApiController]
     public class AccountController : ControllerBase
     {
+        private readonly IAuthorizationService _authorizationService;
         private readonly IAccountService _accountService;
         private readonly ISessionService _sessionService;
-        private readonly IMapper _mapper;
 
         /// <summary>
         /// Initializes a new instance of <see cref="AccountController"/>
         /// </summary>
+        /// <param name="authorizationService">The authorization service</param>
         /// <param name="accountService">The account service</param>
         /// <param name="sessionService">The session service</param>
-        /// <param name="mapper">The mapper</param>
-        public AccountController(IAccountService accountService, ISessionService sessionService, IMapper mapper)
+        public AccountController(IAuthorizationService authorizationService, IAccountService accountService, ISessionService sessionService)
         {
+            _authorizationService = authorizationService;
             _accountService = accountService;
             _sessionService = sessionService;
-            _mapper = mapper;
+        }
+
+        /// <summary>
+        /// Function for authorizing the user to get acces to the application
+        /// </summary>
+        /// <param name="user">the user that we want to authorize</param>
+        /// <param name="cancellationToken">the cancellationToken</param>
+        /// <returns></returns>
+        [HttpPost("authorize/")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> Authorize([FromBody] AuthorizeUserDto user, CancellationToken cancellationToken)
+        {
+            var tokenAccess = await _authorizationService.AuthorizeAsync(user.Email, user.Password, cancellationToken);
+            return Ok(tokenAccess);
         }
 
         /// <summary>
@@ -42,20 +52,13 @@ namespace IdentityService.Api.Controllers
         /// <param name="cancellationToken">Cancellation token from the HTTP request</param>
         /// <returns>Returns type (IActionResult) OK if the user has successfully
         /// been created or badRequest in the other condition</returns>
-        [HttpPost("create/")] 
+        [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> CreateUser([FromBody] UserCreateRequest user, CancellationToken cancellationToken)
+        public async Task<IActionResult> CreateUser([FromBody] UserDto user, CancellationToken cancellationToken)
         {
-            var userMapped = _mapper.Map<UserDto>(user);
-            var result = await _accountService.CreateUserAsync(userMapped, user.Password);
-
-            if (result == false)
-            {
-                return BadRequest("The user was not created");
-            }
-
-            return Ok(user);
+            var result = await _accountService.CreateUserAsync(user, user.Password);
+            return Ok(result);
         }
 
         /// <summary>
@@ -65,18 +68,12 @@ namespace IdentityService.Api.Controllers
         /// <param name="usergetrequest">the user we want to get</param>
         /// <param name="cancellationToken">the cancellation token</param>
         /// <returns>OK the user exists and BadRequest if not </returns>
-        [HttpGet("get/{id}")]
+        [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetUserById(int id, [FromBody] UserGetRequest usergetrequest, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetUserById(int id, CancellationToken cancellationToken)
         {
-            var user = _mapper.Map<UserDto>(usergetrequest);
-            user.Id = id;
-            var result = await _accountService.GetUserByIdAsync(user, cancellationToken);
-            if(result == null)
-            {
-                return BadRequest("this user does not exist");
-            }
-            return Ok(user);    
+            var result = await _accountService.GetUserByIdAsync(id, cancellationToken);
+            return Ok(result);
         }
 
         /// <summary>
@@ -84,32 +81,24 @@ namespace IdentityService.Api.Controllers
         /// </summary>
         /// <param name="cancellationToken">the cancellation token</param>
         /// <returns>OK the users exist and BadRequest if not</returns>
-        [HttpGet("get-all/")]
+        [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAllUsers(CancellationToken cancellationToken)
         {
             var userList = await _accountService.GetAllUserAsync(cancellationToken);
-            if(userList == null)
-            {
-                return BadRequest("there is no registered user yet");
-            }
-
             return Ok(userList);
         }
-
 
         /// <summary>
         /// Function to logout the user 
         /// </summary>
-        /// <param name="cancellationToken">the cancellationToken token</param>
         /// <returns>IActionResult(Ok) if the user is loggedout or 
         /// BadRequest if he is not logged out</returns>
-        [HttpGet("logout/{cancellationToken}")]  
+        [HttpGet("logout/")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> Logout(CancellationToken cancellationToken)
+        public async Task<IActionResult> Logout()
         {
             await _sessionService.LogoutAsync();
-
             return Ok("Successfully...");
         }
 
@@ -119,20 +108,13 @@ namespace IdentityService.Api.Controllers
         /// <param name="user">the user that we want to update</param>
         /// <param name="cancellationToken">the cancellationToken</param>
         /// <returns>OK the user has been updated and BadRequest if has not been updated</returns>
-        [HttpPut("update/")]
+        [HttpPut]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> UpdateUser([FromBody] UserUpdateRequest user, CancellationToken cancellationToken)
+        public async Task<IActionResult> UpdateUser([FromBody] UserDto user, CancellationToken cancellationToken)
         {
-            var mappedUser = _mapper.Map<UserDto>(user);
-            var checkedUser = await _accountService.UpdateUserAsync(mappedUser);
-
-            if (checkedUser == false)
-            {
-                return BadRequest("The user was not updated");
-            }
-
-            return Ok(user);
+            var checkedUser = await _accountService.UpdateUserAsync(user);
+            return Ok(checkedUser);
         }
 
         /// <summary>
@@ -142,44 +124,13 @@ namespace IdentityService.Api.Controllers
         /// <param name="cancellationToken">the cancellation token from the http request</param>
         /// <returns>OK if the user has been deleted and BadRequest if he has not been
         /// Deleted</returns>
-        [HttpDelete("delete/")]
+        [HttpDelete("{id}")] 
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> DeleteUser(UserUpdateRequest user, CancellationToken cancellationToken)
+        public async Task<IActionResult> DeleteUser(int id, CancellationToken cancellationToken)
         {
-            var mappedUser = _mapper.Map<UserDto>(user);
-
-            var checkedUser = await _accountService.DeleteUserAsync(mappedUser);
-
-            if (checkedUser == null)
-            {
-                return BadRequest("The user was not deleted");
-            }
-
-            return Ok(user);
-        }
-
-        /// <summary>
-        /// Function the Update the claims of the user 
-        /// </summary>
-        /// <param name="id">The id of the user </param>
-        /// <param name="user">the user that we want to update</param>
-        /// <param name="claims">the claim of the user that we want to update</param>
-        /// <param name="cancellationToken">Cancellation token from the HTTP request</param>
-        /// <returns></returns>
-        [HttpPut("updateClaim/{id}/{claims}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> UpdateClaims(int id, [FromBody] UserUpdateRequest user, [FromRoute] List<Claim> claims, CancellationToken cancellationToken)
-        {
-            var mappedUser = _mapper.Map<UserDto>(user);
-            mappedUser.Id = id;
-            var userClaims = _mapper.Map<List<UserClaim>>(claims);
-            mappedUser.Claims = userClaims;
-
-            await _accountService.UpdateUserClaimsAsync(mappedUser, cancellationToken);
-
-            return Ok(user);
+            var checkedUser = await _accountService.DeleteUserAsync(id);
+            return Ok(checkedUser);
         }
 
         /// <summary>
@@ -190,48 +141,43 @@ namespace IdentityService.Api.Controllers
         /// <param name="cancellationToken">Cancellation token from the HTTP request</param>
         /// <returns>OK if the user has been updated or BadRequest if the user 
         /// has not been updated</returns>
-        [HttpPut("update-password/{newPassword}")]
+        [HttpPut("{newPassword}")]  
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> UpdatePassword([FromBody] UserUpdateRequest user, string newPassword, CancellationToken cancellationToken)
+        public async Task<IActionResult> UpdatePassword([FromBody] UserUpdatePasswordDto user, string newPassword, CancellationToken cancellationToken)
         {
-            var mappedUser = _mapper.Map<UserDto>(user);
-            var result = await _accountService.UpdatePasswordAsync(mappedUser, user.Password, newPassword);
-
-            if (result == false)
-            {
-                return BadRequest("The password of the user was not updated");
-            }
-
-            return Ok(user);
+            var result = await _accountService.UpdatePasswordAsync(user, user.Password, newPassword);
+            return Ok(result);
         }
-
 
         /// <summary>
-        ///  Functon to reset the password of the user 
+        /// Function to refresh the token of the user 
         /// </summary>
-        /// <param name="user">the user that want to reset his password</param>
-        /// <param name="newPassword">the new password of the user</param>
-        /// <param name="cancellationToken">ancellation token from the HTTP request</param>
-        /// <returns>Ok if the password has been updated and badrequest in
-        /// the other case</returns>
-        [HttpPut("reset-password/{newPassword}")]
+        /// <param name="refreshToken"></param>
+        /// <param name="token">cancellation token from the HTTP request</param>
+        /// <returns>return a new Token to the user</returns>
+        [HttpGet("{refreshToken}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> ResetPassword([FromBody] UserUpdateRequest user, string newPassword, CancellationToken cancellationToken)
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> RefreshToken(string refreshToken, CancellationToken cancellationToken)
         {
-            var mappedUser = _mapper.Map<UserDto>(user);
-            var result = await _accountService.ResetPasswordAsync(mappedUser, user.Password, newPassword);
-
-            if (result == false)
-            {
-                return BadRequest("The password of the user was not updated");
-            }
-
-            user.Password = newPassword;
-
-            return Ok(user);
+            var newToken = await _authorizationService.RefreshTokenAsync(refreshToken, cancellationToken);
+            return Ok(newToken);
         }
 
-
+        /// <summary>
+        /// Function to get the claim of the user
+        /// </summary>
+        /// <param name="id">the id of the user</param>
+        /// <param name="token">cancellation token from the HTTP request</param>
+        /// <returns>the claim of the user</returns>
+        [HttpGet("claim/{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetUserClaim(int id, CancellationToken token)
+        {
+            var claims = await _authorizationService.GetUserClaimsAsync(id, token);
+            return Ok(claims);
+        }
     }
 }

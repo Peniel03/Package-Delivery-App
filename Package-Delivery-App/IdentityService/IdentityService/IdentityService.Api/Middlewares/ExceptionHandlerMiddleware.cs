@@ -35,9 +35,7 @@ namespace IdentityService.Api.Middlewares
             catch (Exception ex)
             {
                 string message = $"Error occured: {ex.Message}{Environment.NewLine}{ex.StackTrace}";
-
                 _logger.LogError($"{message}");
-
                 await HandleExceptionAsync(context, ex);
             }
         }
@@ -50,7 +48,6 @@ namespace IdentityService.Api.Middlewares
         private static async Task HandleExceptionAsync(HttpContext httpContext, Exception exception)
         {
             httpContext.Response.StatusCode = GetCodeStatus(exception);
-
             await httpContext.Response
                 .WriteAsync($"{httpContext.Response.StatusCode}\n Message : {exception.Message}");
         }
@@ -70,7 +67,6 @@ namespace IdentityService.Api.Middlewares
             {
                 return StatusCodes.Status403Forbidden;
             }
-
             return StatusCodes.Status500InternalServerError;
         }
 

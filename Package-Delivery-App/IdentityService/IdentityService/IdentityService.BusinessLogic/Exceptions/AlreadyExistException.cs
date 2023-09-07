@@ -38,6 +38,5 @@ namespace IdentityService.BusinessLogic.Exceptions
         {
 
         }
-
     }
 }

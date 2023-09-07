@@ -17,7 +17,6 @@ namespace IdentityService.DataAccess.Extentions
     /// </summary>
     public static class AppDependenciesConfiguration
     {
-
         /// <summary>
         /// Function To Identity Confirguration to the services of the application
         /// </summary>
@@ -36,7 +35,6 @@ namespace IdentityService.DataAccess.Extentions
                     opts.Password.RequireDigit = true;
                 })
                 .AddEntityFrameworkStores<IdentityContext>();
-
             services.AddScoped(serviceProvider =>
             serviceProvider.GetRequiredService<IdentityContext>().Set<UserRefreshToken>());
             services.AddScoped(serviceProvider =>
@@ -44,7 +42,6 @@ namespace IdentityService.DataAccess.Extentions
             services.AddScoped<IUserClaimRepository, UserClaimRepository>();
             services.AddScoped<IUserRefreshTokenRepository, UserRefreshTokenRepository>();
             services.AddScoped<ISaveChangesRepository, SaveChangesRepository>();
-
             return services;
         }
     }

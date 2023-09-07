@@ -1,9 +1,4 @@
 ﻿using ShipmentService.BusinessLogic.DTOs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ShipmentService.BusinessLogic.Interfaces
 {
@@ -15,26 +10,22 @@ namespace ShipmentService.BusinessLogic.Interfaces
         /// <summary>
         /// Function to get the package by weight
         /// </summary>
-        /// <param name="packageDto">the entity that will help us to access the weight in the record 
-        /// where we want to get the package from </param>
+        /// <param name="weight">the weight of the package that we want to get  
         /// <returns>A <see cref="Task"/> that contains <seealso cref="PackageDto"/></returns>
-        Task<PackageDto> GetPackageByWeightAsync(PackageDto packageDto, CancellationToken cancellationToken);
+        Task<PackageDto> GetPackageByWeightAsync(decimal weight, CancellationToken cancellationToken);
 
         /// <summary>
         /// Function to get the package by dimensions
         /// </summary>
-        /// <param name="packageDto">the entity that will help us to access the dimensions in the record 
-        /// where we want to get the package from</param>
+        /// <param name="dimensions">the dimensions of the package that we want to get  
         /// <returns>A <see cref="Task"/>that contains a <seealso cref="PackageDto"/></returns>
-        Task<PackageDto> GetPackageByDimensionsAsync(PackageDto packageDto, CancellationToken cancellationToken);
+        Task<PackageDto> GetPackageByDimensionsAsync(string dimensions, CancellationToken cancellationToken);
 
         /// <summary>
         /// Function to get the package by ownerid
         /// </summary>
-        /// <param name="packageDto">the entity that will help us to access the ownerId in the record 
-        /// where we want to get the package from</param>
+        /// <param name="ownerid">the id of the owner of the package that we want to get
         /// <returns>A <see cref="Task"/> that contains <seealso cref="PackageDto"/></returns>
-        Task<PackageDto> GetPackageByOwnerIdAsync(PackageDto packageDto, CancellationToken cancellationToken);
-
+        Task<PackageDto> GetPackageByOwnerIdAsync(int ownerid, CancellationToken cancellationToken); 
     }
 }

@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ExpeditionService.DataAccess.Models;
 
 namespace ExpeditionService.DataAccess.Interfaces
 {
-    public class IPersonRepository
+    /// <summary>
+    /// The person repository interface to perfom additionals operations on person
+    /// </summary>
+    public interface IPersonRepository: IBaseRepository<Person>
     {
+      
     }
 }

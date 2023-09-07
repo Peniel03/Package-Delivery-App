@@ -1,9 +1,4 @@
 ﻿using ShipmentService.DataAccess.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ShipmentService.BusinessLogic.DTOs
 {
@@ -51,6 +46,5 @@ namespace ShipmentService.BusinessLogic.DTOs
         /// navigation property for Shipment
         /// </summary>
         public List<Shipment> Shipements { get; set; }
-
     }
 }

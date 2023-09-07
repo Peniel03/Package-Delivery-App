@@ -1,15 +1,10 @@
 ﻿using ShipmentService.DataAccess.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ShipmentService.BusinessLogic.DTOs
 {
     /// <summary>
     /// the package's data transfer object 
-    /// </summary>
+    /// </summary> 
     public class PackageDto
     {
         /// <summary>
@@ -42,6 +37,5 @@ namespace ShipmentService.BusinessLogic.DTOs
         /// navigation property for shipment
         /// </summary>
         public Shipment Shipment { get; set; }
-
     }
 }

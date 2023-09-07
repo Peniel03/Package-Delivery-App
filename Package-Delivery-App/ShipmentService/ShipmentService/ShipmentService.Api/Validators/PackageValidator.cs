@@ -1,13 +1,13 @@
 ﻿using FluentValidation;
-using ShipmentService.Api.Request;
 using ShipmentService.Api.ValidationRules;
+using ShipmentService.BusinessLogic.DTOs;
 
 namespace ShipmentService.Api.Validators
 {
     /// <summary>
     /// the validator for the package request
     /// </summary>
-    public class PackageValidator:AbstractValidator<PackageRequest>
+    public class PackageValidator:AbstractValidator<PackageDto> 
     {
         /// <summary>
         /// Initialization of a new instance of <see cref="PackageValidator"/>
@@ -19,8 +19,7 @@ namespace ShipmentService.Api.Validators
             RuleFor(x => x.Dimensions) 
                 .DimensionsValidation();
             RuleFor(x => x.ContentDescription)
-                .ContentDescriptionValidation();
-
+                .ContentDescriptionValidation(); 
         }
     }
 }

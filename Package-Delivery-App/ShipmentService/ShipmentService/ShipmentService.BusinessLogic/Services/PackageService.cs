@@ -1,27 +1,20 @@
 ﻿using AutoMapper;
-using Microsoft.Extensions.Logging;
 using ShipmentService.BusinessLogic.DTOs;
 using ShipmentService.BusinessLogic.Exceptions;
 using ShipmentService.BusinessLogic.Interfaces;
 using ShipmentService.DataAccess.Interfaces;
 using ShipmentService.DataAccess.Models;
-using ShipmentService.DataAccess.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ShipmentService.BusinessLogic.Services
 {
     /// <summary>
-    /// the implementation of package service to manage packages
+    /// The implementation of package service to manage packages.
     /// </summary>
     public class PackageService : IPackageService
     {
         private readonly IPackageRepository _packageRepository;
         private readonly IMapper _mapper;
-        private readonly ILogger<PackageService> _logger;
+        private readonly ILoggerManager _logger;
         private readonly ISaveChangesRepository _saveChangesRepository;
 
         /// <summary>
@@ -33,7 +26,7 @@ namespace ShipmentService.BusinessLogic.Services
         /// <param name="saveChangesRepository"></param>
         public PackageService(IPackageRepository packageRepository,
             IMapper mapper,
-            ILogger<PackageService> logger,
+            ILoggerManager logger,
             ISaveChangesRepository saveChangesRepository)
         {
             _packageRepository = packageRepository;
@@ -52,24 +45,21 @@ namespace ShipmentService.BusinessLogic.Services
         public async Task<PackageDto> AddAsync(PackageDto packageDto, CancellationToken cancellationToken)
         {
             var mappedPackage = _mapper.Map<Package>(packageDto);
-            var checkedPackage = await _packageRepository.GetById(mappedPackage.Id, cancellationToken);
-
-            //if (checkedPackage != null)
-            //{
-            //    _logger.LogError("Error occured while adding the package");
-            //    throw new AlreadyExistException("This package already exist");
-            //}
-
-            _packageRepository.Add(mappedPackage);
-
+            var checkedPackage = await _packageRepository.GetBySomethingAsync(x => x.Id == mappedPackage.Id, cancellationToken);
+            if (checkedPackage != null)
+            {
+                _logger.LogError("Error occured while adding the package");
+                throw new AlreadyExistException("This package already exist");
+            }
+            _packageRepository.AddAsync(mappedPackage);
             try
             {
                 await _saveChangesRepository.SaveChangesAsync();
-                _logger.LogInformation("Changes successfully saved in the database");
+                _logger.LogInfo("Changes successfully saved in the database");
             }
             catch (Exception ex)
             {
-                _logger.LogInformation($"Error occured while adding a package{ex.Message}", ex);
+                _logger.LogInfo($"Error occured while adding a package{ex.Message}");
                 throw new ArgumentException($"Something went wrong while adding the package {ex.Message}");
             }
             return packageDto; 
@@ -78,33 +68,33 @@ namespace ShipmentService.BusinessLogic.Services
         /// <summary>
         /// <inheritdoc/>
         /// </summary>
-        /// <param name="packageDto">the package's datat transfert object</param>
+        /// <param name="id">the id of the package that we want to get</param>
         /// <param name="cancellationToken">the cancelation token</param>
         /// <exception cref="NotFoundException">the not found exception</exception>
         /// <exception cref="ArgumentException">the argument exception</exception>
         /// <returns>A <see cref="Task"/>that contains <seealso cref="PackageDto"/></returns>
 
-        public async Task<PackageDto> DeleteAsync(PackageDto packageDto, CancellationToken cancellationToken)
+        public async Task<PackageDto> DeleteAsync(int id, CancellationToken cancellationToken)
         {
+            PackageDto packageDto = new PackageDto();
             var mappedPackage = _mapper.Map<Package>(packageDto);
-            var checkedPackage = await _packageRepository.GetById(mappedPackage.Id, cancellationToken);
+            mappedPackage.Id = id;
+            var checkedPackage = await _packageRepository.GetBySomethingAsync(x => x.Id == mappedPackage.Id, cancellationToken);
             if (checkedPackage == null)
             {
                 throw new NotFoundException("The package wasn't found");
             }
-
             try
             {
-                _packageRepository.Delete(mappedPackage);
+                _packageRepository.DeleteAsync(mappedPackage);
                 await _saveChangesRepository.SaveChangesAsync();
-                _logger.LogInformation("Changes successfully saved in the database");
+                _logger.LogInfo("Changes successfully saved in the database");
             }
             catch (Exception ex)
             {
                 throw new ArgumentException($"Something went wrong while deleting the package {ex.Message}", ex);
             }
             return packageDto;
-
         }
 
         /// <summary>
@@ -115,28 +105,28 @@ namespace ShipmentService.BusinessLogic.Services
         /// <returns>A <see cref="Task"/>that contains <seealso cref="PackageDto"/></returns>
         public async Task<List<PackageDto>> GetAllAsync(CancellationToken cancellationToken)
         {
-            var list = await _packageRepository.GetAll(cancellationToken);
+            var list = await _packageRepository.GetAllAsync(cancellationToken);
             if (list == null)
             {
                 throw new NotFoundException("There no registered packages yet");
             }
-
             var listDto = _mapper.Map<List<PackageDto>>(list);
-
             return listDto;
         }
 
         /// <summary>
         /// <inheritdoc/>
         /// </summary>
-        /// <param name="packageDto">the package datat transfert object</param>
+        /// <param name="id">the id of the package that we want to get</param>
         /// <param name="cancellationToken">the cancellation token</param>
         /// <exception cref="NotFoundException"></exception>
         /// <returns>A <see cref="Task"/>that contains <seealso cref="PackageDto"/></returns>
-        public async Task<PackageDto> GetByIdAsync(PackageDto packageDto, CancellationToken cancellationToken)
+        public async Task<PackageDto> GetByIdAsync(int id, CancellationToken cancellationToken)
         {
+            PackageDto packageDto = new PackageDto();
             var mappedPackage = _mapper.Map<Package>(packageDto);
-            var checkedPackage = await _packageRepository.GetById(mappedPackage.Id, cancellationToken);
+            mappedPackage.Id = id;
+            var checkedPackage = await _packageRepository.GetBySomethingAsync(x => x.Id == mappedPackage.Id, cancellationToken);
             if (checkedPackage == null)
             {
                 throw new NotFoundException("This package wasn't found");
@@ -147,14 +137,16 @@ namespace ShipmentService.BusinessLogic.Services
         /// <summary>
         /// <inheritdoc/>
         /// </summary>
-        /// <param name="packageDto">the package's data transfer object</param>
+        /// <param name="dimensions">the dimensions of the package that we want to get</param>
         /// <param name="cancellationToken"></param>
         /// <exception cref="NotImplementedException"></exception>
         /// <returns>A <see cref="Task"/>that contains <seealso cref="PackageDto"/></returns>
-        public async Task<PackageDto> GetPackageByDimensionsAsync(PackageDto packageDto, CancellationToken cancellationToken)
+        public async Task<PackageDto> GetPackageByDimensionsAsync(string dimensions, CancellationToken cancellationToken)
         {
+            PackageDto packageDto = new PackageDto();
             var mappedPackage = _mapper.Map<Package>(packageDto);
-            var checkedPackage = await _packageRepository.GetPackageByDimensions(mappedPackage.Dimensions, cancellationToken);
+            mappedPackage.Dimensions = dimensions;
+            var checkedPackage = await _packageRepository.GetBySomethingAsync(x => x.Dimensions == mappedPackage.Dimensions, cancellationToken);
             if (checkedPackage == null)
             {
                 throw new NotFoundException("This package wasn't found");
@@ -165,14 +157,16 @@ namespace ShipmentService.BusinessLogic.Services
         /// <summary>
         /// <inheritdoc/>
         /// </summary>
-        /// <param name="packageDto">the package's data transfer object</param>
+        /// <param name="ownerid">the id of the owner  of the package</param>
         /// <param name="cancellationToken">the cancellation token</param>
         /// <returns>A <see cref="Task"/>that contains <seealso cref="PackageDto"/></returns>
         /// <exception cref="NotFoundException"></exception>
-        public async Task<PackageDto> GetPackageByOwnerIdAsync(PackageDto packageDto, CancellationToken cancellationToken)
+        public async Task<PackageDto> GetPackageByOwnerIdAsync(int ownerid, CancellationToken cancellationToken)
         {
+            PackageDto packageDto = new PackageDto();
             var mappedPackage = _mapper.Map<Package>(packageDto);
-            var checkedPackage = await _packageRepository.GetPackageByOwnerId(mappedPackage.OwnerId, cancellationToken);
+            mappedPackage.OwnerId = ownerid;
+            var checkedPackage = await _packageRepository.GetBySomethingAsync(x => x.OwnerId == mappedPackage.OwnerId, cancellationToken);
             if (checkedPackage == null)
             {
                 throw new NotFoundException("This package wasn't found");
@@ -183,14 +177,16 @@ namespace ShipmentService.BusinessLogic.Services
         /// <summary>
         /// <inheritdoc/>
         /// </summary>
-        /// <param name="packageDto">the package data transfert object</param>
+        /// <param name="weight">the weight of the package that we want to get</param>
         /// <param name="cancellationToken">the cancellation token</param>
         /// <returns>A <see cref="Task"/>that contains <seealso cref="PackageDto"/></returns>
         /// <exception cref="NotFoundException"></exception>
-        public async Task<PackageDto> GetPackageByWeightAsync(PackageDto packageDto, CancellationToken cancellationToken)
+        public async Task<PackageDto> GetPackageByWeightAsync(decimal weight, CancellationToken cancellationToken)
         {
+            PackageDto packageDto = new PackageDto();
             var mappedPackage = _mapper.Map<Package>(packageDto);
-            var checkedPackage = await _packageRepository.GetPackageByWeight(mappedPackage.Weight, cancellationToken);
+            mappedPackage.Weight = weight; 
+            var checkedPackage = await _packageRepository.GetBySomethingAsync(x => x.Weight == mappedPackage.Weight, cancellationToken); 
             if (checkedPackage == null)
             {
                 throw new NotFoundException("This package wasn't found");
@@ -210,26 +206,22 @@ namespace ShipmentService.BusinessLogic.Services
         public async Task<PackageDto> UpdateAsync(PackageDto packageDto, CancellationToken cancellationToken)
         {
             var mappedPackage = _mapper.Map<Package>(packageDto);
-            var checkedPackage = await _packageRepository.GetById(mappedPackage.Id, cancellationToken);
+            var checkedPackage = await _packageRepository.GetBySomethingAsync(x => x.Id == mappedPackage.Id, cancellationToken);
             if (checkedPackage == null)
             {
-                throw new NotFoundException("This package wasn't found");
-
+                throw new NotFoundException("This package wasn't found"); 
             }
             try
             {
-                _packageRepository.Update(mappedPackage);
+                _packageRepository.UpdateAsync(mappedPackage);
                 await _saveChangesRepository.SaveChangesAsync();
-                _logger.LogInformation("Changes successfully saved in the database");
+                _logger.LogInfo("Changes successfully saved in the database");
             }
             catch (Exception ex)
             {
                 throw new ArgumentException($"Something went wrong while adding the package {ex.Message}");
             }
-
             return packageDto; 
-        }
-
-        
+        }      
     }
 }

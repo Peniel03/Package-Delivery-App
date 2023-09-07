@@ -1,11 +1,17 @@
 ﻿using FluentValidation;
-using ShipmentService.Api.Request;
 using ShipmentService.Api.ValidationRules;
+using ShipmentService.BusinessLogic.DTOs;
 
 namespace ShipmentService.Api.Validators
 {
-    public class ShipmentCreateValidator: AbstractValidator<ShipmentCreateRequest>
+    /// <summary>
+    /// the validator for the shipmentcreate request
+    /// </summary>
+    public class ShipmentCreateValidator: AbstractValidator<ShipmentDto>
     {
+        /// <summary>
+        /// initialization of the shipmentcreate request
+        /// </summary>
         public ShipmentCreateValidator()
         {
             RuleFor(x => x.PickupDateTime)

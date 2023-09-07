@@ -57,7 +57,6 @@ namespace ShipmentService.Api.ValidationRules
                 .MinimumLength(3)
                 .MaximumLength(30)
                 .WithMessage("Invalid City");
-
             return builder;
         }
 
@@ -75,7 +74,6 @@ namespace ShipmentService.Api.ValidationRules
                 .MinimumLength(3)
                 .MaximumLength(30)
                 .WithMessage("Invalid Country");
-
             return builder;
         }
 
@@ -93,7 +91,6 @@ namespace ShipmentService.Api.ValidationRules
                 .MinimumLength(3)
                 .MaximumLength(8)
                 .WithMessage("Invalid PostalCode");
-
             return builder;
         }
     }

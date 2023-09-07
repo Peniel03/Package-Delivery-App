@@ -5,15 +5,9 @@ using IdentityService.BusinessLogic.Interfaces;
 using IdentityService.DataAccess.Data.SeedData;
 using IdentityService.DataAccess.Interfaces;
 using IdentityService.DataAccess.Models;
-using IdentityService.DataAccess.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace IdentityService.BusinessLogic.Servcices
 {
@@ -22,8 +16,6 @@ namespace IdentityService.BusinessLogic.Servcices
     /// </summary>
     public class AccountService : IAccountService
     {
-
-
         private readonly IMapper _mapper;
         private readonly UserManager<User> _userManager;
         private readonly ILoggerManager _logger;
@@ -60,22 +52,20 @@ namespace IdentityService.BusinessLogic.Servcices
         /// <returns>A <see cref="Task"/></returns>
         public async Task<bool> CreateUserAsync(UserDto user, string password)
         {
-            var mappedUser = _mapper.Map<User>(user);   
-            using(_userManager)
+            var mappedUser = _mapper.Map<User>(user); 
+            using (_userManager)
             {
                 var checkedUser = await _userManager.FindByEmailAsync(mappedUser.Email);    
-
                if(checkedUser != null)
                 {
                     _logger.LogError("Error occured while creating user");
 
                     throw new AlreadyExistException("This user already exists");
                 }
-
-                //checkedUser.SecurityStamp = Guid.NewGuid().ToString();
+                mappedUser.SecurityStamp = Guid.NewGuid().ToString();
                 var result = await _userManager.CreateAsync(mappedUser, password);
                 var role = new UserRole(UserRoleTypes.RolesTypes[0]);
-
+                await _userManager.AddToRoleAsync(mappedUser, role.Name);
                 return result.Succeeded;
             }
         }
@@ -86,20 +76,21 @@ namespace IdentityService.BusinessLogic.Servcices
         /// <param name="user">The user that we want to delete</param>
         /// <returns>A task <see cref="Task" that contains <seealso cref="UserDto"/>/></returns> 
         /// <exception cref="NotFoundException"></exception>
-        public async Task<UserDto> DeleteUserAsync(UserDto user)
+        public async Task<DeleteUserDto> DeleteUserAsync(int id) 
         {
+            DeleteUserDto user = new DeleteUserDto();
             var mappedUser = _mapper.Map<User>(user);
-            using(_userManager)
+            mappedUser.Id = id; 
+            using (_userManager)
             {
-                var checkedUser = await _userManager.FindByEmailAsync(mappedUser.Email);
+                var checkedUser = await _userManager.FindByIdAsync(mappedUser.Id.ToString());
                 if( checkedUser != null )
                 {
                     _logger.LogError("Error occured while processing the delete request");
 
                     throw new NotFoundException("The user was not found");
                 }
-                var result = await _userManager.DeleteAsync(checkedUser);
-
+                 await _userManager.DeleteAsync(checkedUser);
                 return user;
             }
         }
@@ -130,47 +121,15 @@ namespace IdentityService.BusinessLogic.Servcices
         /// <param name="cancellationToken">the cancellation token</param>
         /// <returns>A <see cref="Task"/> that contains a <seealso cref="UserDto"/></returns>
         /// <exception cref="NotFoundException"></exception>
-        public async Task<UserDto> GetUserByIdAsync(UserDto user, CancellationToken cancellationToken)
+        public async Task<UserDto> GetUserByIdAsync(int id, CancellationToken cancellationToken)
         {
-            var mapperUser = _mapper.Map<User>(user);
-            var checkedUder = await _userManager.FindByIdAsync(mapperUser.Id.ToString());
+             var checkedUder = await _userManager.FindByIdAsync(id.ToString()); 
             if( checkedUder != null )
             {
                 throw new NotFoundException("The user was not found");
-
             }
             return _mapper.Map<UserDto>(checkedUder); 
-
         }
-
-        /// <summary>
-        /// <inheritdoc/>
-        /// </summary>
-        /// <param name="user">The user for whom we want to reset the password</param>
-        /// <param name="password">The old user's password</param>
-        /// <param name="newPassword">The new user's password</param>
-        /// <exception cref="NotFoundException"></exception>
-        /// /// <returns>A <see cref="Task"/> that contatins the state of the request (true if the password
-        /// has been reseted and false in the other case)</returns>
-        public async Task<bool> ResetPasswordAsync(UserDto user, string password, string newPassword)
-        {
-            using (_userManager)
-            {
-                var checkedUser = await _userManager.FindByEmailAsync(user.Email);
-
-                if (checkedUser == null)
-                {
-                    _logger.LogError("Error occured while reseting password");
-
-                    throw new NotFoundException("The user was not found");
-                }
-
-                var result = await _userManager.ChangePasswordAsync(checkedUser, password, newPassword);
-
-                return result.Succeeded;
-            }
-        }
-
 
         /// <summary>
         /// <inheritdoc/>
@@ -181,27 +140,27 @@ namespace IdentityService.BusinessLogic.Servcices
         /// <exception cref="NotFoundException"></exception>
         /// <returns>The state of the request</returns>
 
-        public async Task<bool> UpdatePasswordAsync(UserDto user, string oldPassword, string newPassword)
+        public async Task<bool> UpdatePasswordAsync(UserUpdatePasswordDto user, string oldPassword, string newPassword)
         {
             var mappedUser = _mapper.Map<User>(user);
-
             using (_userManager)
             {
                 var checkedUser = await _userManager.FindByEmailAsync(user.Email);
                 var isValid = await _userManager.CheckPasswordAsync(mappedUser, oldPassword);
-
                 if (checkedUser == null || isValid == false)
                 {
                     _logger.LogError("The user was not found or the password was not correct while updating");
-
                     throw new NotFoundException("The user was not found or the password was not correct");
                 }
-
                 var result = await _userManager.ChangePasswordAsync(checkedUser, oldPassword, newPassword);
-
                 return result.Succeeded;
             }
         }
+
+        //public Task<bool> UpdatePasswordAsync(UserDto user, string oldPassword, string newPassword)
+        //{
+        //    throw new NotImplementedException();
+        //}
 
         /// <summary>
         /// <inheritdoc/>

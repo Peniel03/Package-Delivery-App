@@ -15,9 +15,7 @@ namespace IdentityService.Api.Mapping.Profiles
         public ClaimProfile()
         {
             CreateMap<Claim, UserClaim>()
-               .ForMember(dest => dest.ClaimType, source => source.MapFrom(source => source.Type))
-               .ForMember(dest => dest.ClaimValue, source => source.MapFrom(source => source.Value))
-               .ReverseMap();
+                 .ReverseMap();
         }
     }
 }

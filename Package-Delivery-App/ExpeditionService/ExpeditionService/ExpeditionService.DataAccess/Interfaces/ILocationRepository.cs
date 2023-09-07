@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ExpeditionService.DataAccess.Models;
 
 namespace ExpeditionService.DataAccess.Interfaces
 {
-    public interface ILocationRepository
+    /// <summary>
+    /// The location repository interface to perfom additionals operations on Location 
+    /// </summary>
+    public interface ILocationRepository: IBaseRepository<Location>
     {
+       
     }
 }

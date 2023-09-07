@@ -1,9 +1,4 @@
 ﻿using ShipmentService.BusinessLogic.DTOs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ShipmentService.BusinessLogic.Interfaces
 {
@@ -15,18 +10,15 @@ namespace ShipmentService.BusinessLogic.Interfaces
         /// <summary>
         /// Function to get a person by name
         /// </summary>
-        /// <param name="personDto">the entity that will help us to access the name in the record 
-        /// where we want to get the person from</param>
+        /// <param name="name"> the name of the person that we want to get
         /// <returns>A <see cref="Task"/> that contains <seealso cref="PersonDto"/></returns>
-        Task<PersonDto> GetPersonByNameAsync(PersonDto personDto, CancellationToken cancellationToken);
+        Task<PersonDto> GetPersonByNameAsync(string name, CancellationToken cancellationToken);
 
         /// <summary>
         /// Function To get a person by phonenumber
         /// </summary>
-        /// <param name="personDto">the entity that will help us to access the phone number in the record 
-        /// where we want to get the person from</param>
+        /// <param name="phonenumber">the phone number of the person that we want to get
         /// <returns>A <see cref="Task"/> that contains <seealso cref="PersonDto"/></returns>
-        Task<PersonDto> GetPersonByPhoneNumberAsync(PersonDto personDto, CancellationToken cancellationToken); 
-
+        Task<PersonDto> GetPersonByPhoneNumberAsync(string phonenumber, CancellationToken cancellationToken);  
     }
 }

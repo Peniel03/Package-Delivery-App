@@ -1,10 +1,6 @@
-﻿using MongoDB.Bson;
+﻿using ExpeditionService.DataAccess.Data;
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ExpeditionService.DataAccess.Models
 {
@@ -18,7 +14,7 @@ namespace ExpeditionService.DataAccess.Models
         /// <summary>
         /// the shipment id
         /// </summary>
-        public string Id { get; set; }
+        public string Id { get; set; }  
 
         /// <summary>
         /// the shipment tracking number
@@ -33,7 +29,7 @@ namespace ExpeditionService.DataAccess.Models
         /// <summary>
         /// the shipment delivery method
         /// </summary>
-        public string DeliveryMethod { get; set; } = string.Empty;
+        public ShipmentDeliveryMethod DeliveryMethod { get; set; }
 
         /// <summary>
         /// the shipment estimated delivery datetime
@@ -51,9 +47,9 @@ namespace ExpeditionService.DataAccess.Models
         public decimal ShipmentCost { get; set; }
 
         /// <summary>
-        /// the shipment status
+        /// the shipment status (enum value)
         /// </summary>
-        public string ShipmentStatus { get; set; } = string.Empty;
+        public ShipmentStatus ShipmentStatus { get; set; }
 
         /// <summary>
         /// the pick up location id
@@ -100,7 +96,5 @@ namespace ExpeditionService.DataAccess.Models
         /// the id of the user or employee that will register the shipment
         /// </summary>
         public int UserId { get; set; }
-
-
     }
 }

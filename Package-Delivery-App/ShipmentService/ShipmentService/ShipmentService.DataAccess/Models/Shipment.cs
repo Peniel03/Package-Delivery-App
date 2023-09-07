@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ShipmentService.DataAccess.Models
+﻿namespace ShipmentService.DataAccess.Models
 {
     /// <summary>
     /// The shipment class
@@ -94,8 +88,6 @@ namespace ShipmentService.DataAccess.Models
         /// <summary>
         /// the id of the user or employee that will register the shipment
         /// </summary>
-        public int UserId { get; set; }
-
-        
+        public int UserId { get; set; }     
     }
 }

@@ -1,5 +1,4 @@
 ﻿using FluentValidation;
-using System.Runtime.CompilerServices;
 
 namespace ShipmentService.Api.ValidationRules
 {
@@ -22,7 +21,6 @@ namespace ShipmentService.Api.ValidationRules
                 .MinimumLength(3)
                 .MaximumLength(30)
                 .WithMessage("Invalid Name");
-
             return builder;
         }
 
@@ -41,11 +39,7 @@ namespace ShipmentService.Api.ValidationRules
                     2[98654321]\d|9[8543210]|8[6421]|6[6543210]|5[87654321]|
                     4[987654310]|3[9643210]|2[70]|7|1)\d{1,14}$")
                 .WithMessage("Invalid phone Number");
-
             return builder;
         }
-
-
-
     }
 }

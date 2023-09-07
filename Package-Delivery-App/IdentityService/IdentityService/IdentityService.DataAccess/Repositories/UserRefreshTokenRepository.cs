@@ -3,7 +3,6 @@ using IdentityService.DataAccess.Interfaces;
 using IdentityService.DataAccess.Models;
 using Microsoft.EntityFrameworkCore;
 
-
 namespace IdentityService.DataAccess.Repositories
 {
     /// <summary>
@@ -32,7 +31,6 @@ namespace IdentityService.DataAccess.Repositories
         public void AddUserRefreshToken(UserRefreshToken userRefreshToken)
         {
             _userRefreshTokens.Add(userRefreshToken);
-
         }
 
         /// <summary>
@@ -41,11 +39,11 @@ namespace IdentityService.DataAccess.Repositories
         /// <param name="tokenRefreshed">The refreshed cancellationToken that we want to get</param>
         /// <param name="cancellationToken">The cancellation cancellationToken</param>
         /// <returns></returns>
-        public Task<UserRefreshToken?> GetSavedUserRefreshTokensAsync(string tokenRefreshed, CancellationToken cancellationToken)
+        public async Task<UserRefreshToken?> GetSavedUserRefreshTokensAsync(string tokenRefreshed, CancellationToken cancellationToken)
         {
-            return _userRefreshTokens.Include(i => i.User)
-                                   .AsNoTracking()
-                                   .FirstOrDefaultAsync(x => x.RefreshToken == tokenRefreshed, cancellationToken);
+            return await _userRefreshTokens.Include(i => i.User)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.RefreshToken == tokenRefreshed, cancellationToken);
         }
 
         /// <summary>
@@ -55,8 +53,6 @@ namespace IdentityService.DataAccess.Repositories
         public void UpdateUserRefreshToken(UserRefreshToken userRefreshToken)
         {
             _userRefreshTokens.Update(userRefreshToken);
-
         }
-
     }
 }

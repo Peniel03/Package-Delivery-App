@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace IdentityService.DataAccess.Models
+﻿namespace IdentityService.DataAccess.Models
 {
     /// <summary>
     ///the refress token of the user
@@ -52,11 +46,8 @@ namespace IdentityService.DataAccess.Models
                 {
                     return true;
                 }
-
                 return false;
             }
         }
-
-
     }
 }

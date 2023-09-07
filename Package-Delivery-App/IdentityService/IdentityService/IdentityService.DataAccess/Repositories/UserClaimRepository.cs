@@ -2,13 +2,6 @@
 using IdentityService.DataAccess.Interfaces;
 using IdentityService.DataAccess.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace IdentityService.DataAccess.Repositories
 {
@@ -17,7 +10,6 @@ namespace IdentityService.DataAccess.Repositories
     /// </summary>
     public class UserClaimRepository : IUserClaimRepository
     {
-
         private readonly IdentityContext _identityContext;
         private readonly DbSet<UserClaim> _claims;
 
@@ -37,9 +29,9 @@ namespace IdentityService.DataAccess.Repositories
         /// <param name="id">The id of the user that we want to get the claims</param>
         /// <param name="cancellationToken">The cancellation token</param>
         /// <returns>List of <see cref="UserClaim"/></returns>
-        public Task<List<UserClaim>> GetUserClaimsAsync(int id, CancellationToken cancellationToken)
+        public async Task<List<UserClaim>> GetUserClaimsAsync(int id, CancellationToken cancellationToken)
         {
-            return _claims
+            return await _claims
                         .Where(userClaim => userClaim.Id == id)
                         .AsNoTracking()
                         .ToListAsync(cancellationToken);

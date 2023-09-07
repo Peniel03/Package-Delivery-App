@@ -1,9 +1,4 @@
 ﻿using ShipmentService.BusinessLogic.DTOs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ShipmentService.BusinessLogic.Interfaces
 {
@@ -15,34 +10,29 @@ namespace ShipmentService.BusinessLogic.Interfaces
         /// <summary>
         /// Function to get the location by address
         /// </summary>
-        /// <param name="locationDto">the entity that will help us to access the address in the record
-        /// where we want to get the location from</param>
+        /// <param name="address">the address of the location that we want to get
         /// <returns>A <see cref="Task"/> that contains <seealso cref="LocationDto"/></returns>
-        Task<LocationDto> GetLocationByAddressAsync(LocationDto locationDto, CancellationToken cancellationToken);
+        Task<LocationDto> GetLocationByAddressAsync(string address, CancellationToken cancellationToken);
 
         /// <summary>
         /// Function to get the location by city 
         /// </summary>
-        /// <param name="locationDto">the entity that will help us to access the city in the record 
-        /// where we want to get the location from </param>
+        /// <param name="city">the entity of the location that we want to get 
         /// <returns>A <see cref="Task"/> that contains <seealso cref="LocationDto"/></returns>
-        Task<LocationDto> GetLocationByCityAsync(LocationDto locationDto, CancellationToken cancellationToken);
+        Task<LocationDto> GetLocationByCityAsync(string city, CancellationToken cancellationToken);
 
         /// <summary>
         /// Function to get the location by country 
         /// </summary>
-        /// <param name="locationDto">the entity that will help us to access the country in the record 
-        /// where we want to get the location from</param>
+        /// <param name="country">the entity that will help us to access the country in the record 
         /// <returns>A <see cref="Task"/> that contains <seealso cref="LocationDto"/></returns>
-        Task<LocationDto> GetLocationByCountryAsync(LocationDto locationDto, CancellationToken cancellationToken);
+        Task<LocationDto> GetLocationByCountryAsync(string country, CancellationToken cancellationToken);
 
         /// <summary>
         /// Function to get the location by postalcode 
         /// </summary>
-        /// <param name="locationDto">the entity that will help us to access the postal code in the record 
-        /// where we want to get the location from</param>
+        /// <param name="postalcode">the postalcode of the entity that we want to get  
         /// <returns>A <see cref="Task"/> that contains <seealso cref="LocationDto"/></returns>
-        Task<LocationDto> GetLocationByPostalCodeAsync(LocationDto locationDto, CancellationToken cancellationToken);
-
+        Task<LocationDto> GetLocationByPostalCodeAsync(string postalcode , CancellationToken cancellationToken);
     }
 }

@@ -1,19 +1,18 @@
-﻿using IdentityService.BusinessLogic.DTOs;
+﻿using AutoMapper;
+using IdentityService.BusinessLogic.DTOs;
 using IdentityService.BusinessLogic.Exceptions;
 using IdentityService.BusinessLogic.Interfaces;
 using IdentityService.DataAccess.Interfaces;
 using IdentityService.DataAccess.Models;
-using IdentityService.DataAccess.Repositories;
+using MassTransit;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using IdentityService.Messages;
 
 namespace IdentityService.BusinessLogic.Servcices
 {
@@ -22,12 +21,14 @@ namespace IdentityService.BusinessLogic.Servcices
     /// </summary>
     public class AuthorizationService : IAuthorizationService
     {
+        private readonly IMapper _mapper;
         private readonly IConfiguration _configuration;
         private readonly UserManager<User> _userManager;
         private readonly IUserRefreshTokenRepository _userRefreshTokenRepository;
         private readonly IUserClaimRepository _userClaimRepository;
         private readonly ILoggerManager _logger;
         private readonly ISaveChangesRepository _saveChangesRepository;
+        private readonly IPublishEndpoint _publishEndpoint;
 
         /// <summary>
         /// Initializes a new instance of <see cref="AuthorizationService" /> class.
@@ -39,18 +40,21 @@ namespace IdentityService.BusinessLogic.Servcices
         /// <param name="saveChangesRepository"></param>
         public AuthorizationService(UserManager<User> userManager,
             ILoggerManager logger,
+            IMapper mapper,
             IConfiguration configuration,
             IUserRefreshTokenRepository userRefreshTokenRepository,
             IUserClaimRepository userClaimRepository ,
-            ISaveChangesRepository saveChangesRepository)
+            ISaveChangesRepository saveChangesRepository,
+            IPublishEndpoint publishEndpoint)
         {
             _userManager = userManager;
             _logger = logger;
+            _mapper = mapper;
             _configuration = configuration;
             _userRefreshTokenRepository = userRefreshTokenRepository;
             _userClaimRepository = userClaimRepository;
-             _saveChangesRepository = saveChangesRepository;
-
+            _saveChangesRepository = saveChangesRepository;
+            _publishEndpoint = publishEndpoint;
         }
 
         /// <summary>
@@ -75,8 +79,13 @@ namespace IdentityService.BusinessLogic.Servcices
             });
 
             await _saveChangesRepository.SaveChangesAsync(cancellationToken);
-            _logger.LogInfo("Saved the changes to the database");
+            await _publishEndpoint.Publish(_mapper.Map<UserMessage>(user));
+            _logger.LogInfo("User Authorized and published"); 
 
+            if (user == null)
+            {
+                 _logger.LogError("You are not authorized");
+            }
             return new TokenDto
             {
                 RefreshToken = refreshToken,
@@ -95,14 +104,11 @@ namespace IdentityService.BusinessLogic.Servcices
         public async Task<List<UserClaim>> GetUserClaimsAsync(int id, CancellationToken cancellationToken)
         {
             var result = await _userClaimRepository.GetUserClaimsAsync(id, cancellationToken);
-
             if (result == null)
             {
                 _logger.LogError("An error occured the claim were not found");
-
                 throw new NotFoundException("The claims were not found");
             }
-
             return result;
         }
 
@@ -117,28 +123,21 @@ namespace IdentityService.BusinessLogic.Servcices
         {
             var checkedToken = await _userRefreshTokenRepository
                             .GetSavedUserRefreshTokensAsync(token, cancellationToken);
-
             if (checkedToken == null || checkedToken.IsActive == false)
             {
                 _logger.LogError("Error occured while processing the request : User Refresh Token Not Found");
-
                 throw new NotFoundException("User Refresh Token Not Found");
             }
-
             if (checkedToken.User == null)
             {
                 _logger.LogError("Error occured User Not Found");
-
                 throw new NotFoundException("Error occured User Not Found");
             }
-
             var refreshTokenToSave = GenerateRefreshToken();
             checkedToken.RefreshToken = refreshTokenToSave;
             checkedToken.CreationDate = DateTimeOffset.Now;
-
             _userRefreshTokenRepository.UpdateUserRefreshToken(checkedToken);
             await _saveChangesRepository.SaveChangesAsync(cancellationToken);
-
             return new TokenDto
             {
                 AccessToken = await GenerateTokenAsync(checkedToken.User),
@@ -158,17 +157,13 @@ namespace IdentityService.BusinessLogic.Servcices
         {
             var checkedUser = await _userManager.FindByEmailAsync(email);
             var isValid = await _userManager.CheckPasswordAsync(checkedUser, password);
-
             if (isValid == false || checkedUser == null)
             {
                 _logger.LogError("Error occured while processing the validation of credentials ");
-
                 throw new NotFoundException("The user was not found check your password or your email");
             }
-
             return checkedUser;
         }
-
 
         /// <summary>
         /// Function To generate the token from the claims of the user
@@ -191,28 +186,23 @@ namespace IdentityService.BusinessLogic.Servcices
                     new Claim(ClaimTypes.Role, role),
                     new Claim(ClaimTypes.GivenName , user.FirstName),
                 }),
-
                 Expires = DateTime.UtcNow.AddMinutes(Convert.ToInt32(_configuration.GetSection("JWT")["LifeTime"])),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key),
                 SecurityAlgorithms.HmacSha256Signature),
                 Audience = _configuration.GetSection("JWT")["Audience"],
                 Issuer = _configuration.GetSection("JWT")["Issuer"]
             };
-
             try
             {
                 var token = tokenHandler.CreateToken(tokenDescriptor);
-
                 return tokenHandler.WriteToken(token);
             }
             catch (Exception ex)
             {
                 _logger.LogError("Error occured while creating the token");
-
                 throw new NotFoundException("The token can not created " + ex.Message);
             }
         }
-
 
         /// <summary>
         /// Function to generate a refresh token
@@ -221,14 +211,11 @@ namespace IdentityService.BusinessLogic.Servcices
         private string GenerateRefreshToken()
         {
             var randomNumber = new byte[32];
-
             using (var randomNumberGenerator = RandomNumberGenerator.Create())
             {
                 randomNumberGenerator.GetBytes(randomNumber);
-
                 return Convert.ToBase64String(randomNumber);
             }
         }
-
     }
 }

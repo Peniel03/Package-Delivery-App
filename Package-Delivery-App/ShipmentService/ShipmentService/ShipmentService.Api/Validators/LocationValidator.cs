@@ -1,13 +1,13 @@
 ﻿using FluentValidation;
-using ShipmentService.Api.Request;
 using ShipmentService.Api.ValidationRules;
+using ShipmentService.BusinessLogic.DTOs;
 
 namespace ShipmentService.Api.Validators
 {
     /// <summary>
-    /// The validator for the location request.
+    /// The validator for the location request. 
     /// </summary>
-    public class LocationValidator:AbstractValidator<LocationRequest>
+    public class LocationValidator:AbstractValidator<LocationDto>
     {
         /// <summary>
         /// Initialization of a new instance of <see cref="LocationValidator"/>
@@ -25,6 +25,5 @@ namespace ShipmentService.Api.Validators
             RuleFor(x => x.PostalCode) 
                 .PostalCodeValidation();
         }
-
     }
 }

@@ -1,4 +1,5 @@
 ﻿using ShipmentService.BusinessLogic.Exceptions;
+using ShipmentService.BusinessLogic.Interfaces;
 
 namespace ShipmentService.Api.Middlewares
 {
@@ -8,14 +9,14 @@ namespace ShipmentService.Api.Middlewares
     public class ExceptionHandlerMiddleware
     {
         private readonly RequestDelegate _next;
-        private  readonly ILogger _logger;
+        private  readonly ILoggerManager _logger;
 
         /// <summary>
         /// Initializes a new instance of <see cref="ExceptionHandlerMiddleware"/>
         /// </summary>
         /// <param name="next"></param>
         /// <param name="logger"></param>
-        public ExceptionHandlerMiddleware(RequestDelegate next, ILogger logger)
+        public ExceptionHandlerMiddleware(RequestDelegate next, ILoggerManager logger)
         {
             _next = next;
             _logger = logger;
@@ -34,9 +35,7 @@ namespace ShipmentService.Api.Middlewares
             catch (Exception ex)
             {
                 string message = $"Error occured: {ex.Message}{Environment.NewLine}{ex.StackTrace}";
-
                 _logger.LogError($"{message}");
-
                 await HandleExceptionAsync(context, ex);
             }
         }
@@ -49,9 +48,8 @@ namespace ShipmentService.Api.Middlewares
         private static async Task HandleExceptionAsync(HttpContext httpContext, Exception exception)
         {
             httpContext.Response.StatusCode = GetCodeStatus(exception);
-
             await httpContext.Response
-                .WriteAsync($"{httpContext.Response.StatusCode}\n Message : {exception.Message}");
+            .WriteAsync($"{httpContext.Response.StatusCode}\n Message : {exception.Message}");
         }
 
         /// <summary>
@@ -63,17 +61,15 @@ namespace ShipmentService.Api.Middlewares
             if (exception is NotFoundException)
             {
                 return StatusCodes.Status400BadRequest;
-
             }
             else if (exception is AlreadyExistException)
             {
                 return StatusCodes.Status400BadRequest;
-
             }
             else
             {
                 return StatusCodes.Status500InternalServerError;
-            }
+            } 
         }
     }
 }

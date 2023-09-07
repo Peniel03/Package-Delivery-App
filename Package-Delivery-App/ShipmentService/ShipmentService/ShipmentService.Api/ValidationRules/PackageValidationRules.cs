@@ -21,7 +21,6 @@ namespace ShipmentService.Api.ValidationRules
                 .MinimumLength(3)
                 .MaximumLength(20)
                 .WithMessage("Invalid Dimensions");
-
             return builder;
         }
 
@@ -38,7 +37,6 @@ namespace ShipmentService.Api.ValidationRules
                 .ScalePrecision(4, 10)
                 .GreaterThan(0)
                 .WithMessage("Invalid weight");
-
             return builder;
         }
 
@@ -56,10 +54,7 @@ namespace ShipmentService.Api.ValidationRules
                 .MinimumLength(5)
                 .MaximumLength(40)
                 .WithMessage("Invalid content description");
-
             return builder; 
         }
-
-
     }
 }

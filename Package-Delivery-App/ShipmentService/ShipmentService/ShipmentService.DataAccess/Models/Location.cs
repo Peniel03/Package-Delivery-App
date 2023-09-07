@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ShipmentService.DataAccess.Models
+﻿namespace ShipmentService.DataAccess.Models
 {
     /// <summary>
     /// The Location class
@@ -42,6 +36,11 @@ namespace ShipmentService.DataAccess.Models
         public string PostalCode { get; set; } = string.Empty;  
 
         /// <summary>
+        /// the id of the user 
+        /// </summary>
+        public int UserId { get; set; }
+
+        /// <summary>
         /// navigation property for Person
         /// </summary>
         public List<Person> Persons { get; set; }
@@ -50,7 +49,5 @@ namespace ShipmentService.DataAccess.Models
         /// navigation property for Shipment
         /// </summary>
         public List<Shipment> Shipements { get; set; }
-
-
     }
 }

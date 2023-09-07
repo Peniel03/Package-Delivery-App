@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ShipmentService.DataAccess.Models
+﻿namespace ShipmentService.DataAccess.Models
 {
     /// <summary>
     /// The package class
@@ -41,6 +35,5 @@ namespace ShipmentService.DataAccess.Models
         /// navigation property for shipment
         /// </summary>
         public Shipment Shipment { get; set; }  
-
     }
 }

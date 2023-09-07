@@ -1,9 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using ShipmentService.DataAccess.DataContext;
 using ShipmentService.DataAccess.Interfaces;
 using ShipmentService.DataAccess.Models;
-
+using System.Linq.Expressions;
 
 namespace ShipmentService.DataAccess.Repositories
 {
@@ -14,35 +13,31 @@ namespace ShipmentService.DataAccess.Repositories
     {
         private readonly ShipmentContext _shipmentContext;
         private readonly DbSet<Shipment> _shipments;
-        private readonly ILogger<Shipment> _logger;
 
         /// <summary>
         /// initialization of a new instance of <see cref="ShipmentRepository"/>
         /// </summary>
         /// <param name="shipmentContext"></param>
-        /// <param name="logger"></param>
-        public ShipmentRepository(ShipmentContext shipmentContext, ILogger<Shipment> logger)
+        public ShipmentRepository(ShipmentContext shipmentContext)
         {
             _shipmentContext = shipmentContext;
             _shipments = _shipmentContext.Set<Shipment>();
-            _logger = logger;
         }
 
         /// <summary>
         /// <inheritdoc/>
         /// </summary>
         /// <param name="shipment"></param>
-        public void Add(Shipment shipment)
+        public void AddAsync(Shipment shipment)
         {
             _shipments.Add(shipment);
-            _logger.LogInformation($"the shipment {shipment.TrackingNumber} has been added to the database");
         }
 
         /// <summary>
         /// <inheritdoc/>
         /// </summary>
         /// <param name="shipment"></param>
-        public void Delete(Shipment shipment)
+        public void DeleteAsync(Shipment shipment)
         {
             _shipments.Remove(shipment);
         }
@@ -52,100 +47,43 @@ namespace ShipmentService.DataAccess.Repositories
         /// </summary>
         /// <param name="cancellationToken"></param>
         /// <returns>A <see cref="Task"/> that contains a list of <seealso cref="Shipment"/></returns>
-        public Task<List<Shipment>> GetAll(CancellationToken cancellationToken)
+        public async Task<List<Shipment>> GetAllAsync(CancellationToken cancellationToken)
         {
-            return _shipments
+            return await _shipments
                            .AsNoTracking()
                            .ToListAsync(cancellationToken);
         }
 
-
         /// <summary>
         /// <inheritdoc/>
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="predicate"></param>
         /// <param name="cancellationToken"></param>
-        /// <returns>A <see cref="Task"/>That contains <seealso cref="Shipment"/></returns>
-        public Task<Shipment> GetById(int id, CancellationToken cancellationToken)
+        /// <returns></returns>
+        public async Task<Shipment> GetBySomethingAsync(Func<Shipment, bool> predicate, CancellationToken cancellationToken)
         {
-            return _shipments
-                           .AsNoTracking()
-                           .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
-        }
-
-        /// <summary>
-        /// <inheritdoc/>
-        /// </summary>
-        /// <param name="actualDeliveryDateTime"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns>A <see cref="Task"/>That contains <seealso cref="Location"/></returns>
-        public Task<Shipment> GetShipmentByActualDeliveryDate(DateTimeOffset actualDeliveryDateTime, CancellationToken cancellationToken)
-        {
-            return _shipments
-                      .AsNoTracking()
-                       .FirstOrDefaultAsync(x => x.ActualDeliveryDateTime == actualDeliveryDateTime, cancellationToken);
-        }
-
-        /// <summary>
-        /// <inheritdoc/>
-        /// </summary>
-        /// <param name="cost"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns>A <see cref="Task"/>that contains <seealso cref="Shipment"/></returns>
-        public Task<Shipment> GetShipmentByCost(decimal cost, CancellationToken cancellationToken)
-        {
-            return _shipments
-                         .AsNoTracking()
-                         .FirstOrDefaultAsync(x => x.ShipmentCost == cost, cancellationToken);
-        }
-
-        /// <summary>
-        /// <inheritdoc/>
-        /// </summary>
-        /// <param name="pickUpDateTime"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns>A <see cref="Task"/>that contains a list of <seealso cref="Shipment"/></returns> 
-        public Task<Shipment> GetShipmentByPickUpDateTime(DateTimeOffset pickUpDateTime, CancellationToken cancellationToken)
-        {
-            return _shipments
-                       .AsNoTracking()
-                       .FirstOrDefaultAsync(x => x.PickupDateTime == pickUpDateTime, cancellationToken);
-        }
-
-        /// <summary>
-        /// <inheritdoc/>
-        /// </summary>
-        /// <param name="status"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns>A <see cref="Task"/>that contains <seealso cref="Shipment"/></returns>
-        public Task<Shipment> GetShipmentByStatus(string status, CancellationToken cancellationToken)
-        {
-            return _shipments
-                        .AsNoTracking()
-                        .FirstOrDefaultAsync(x => x.ShipmentStatus == status, cancellationToken);
-        }
-
-        /// <summary>
-        /// <inheritdoc/>
-        /// </summary>
-        /// <param name="trackingNumber"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns>A <see cref="Task"/>that contains <seealso cref="Shipment"/></returns>
-        public Task<Shipment> GetShipmentByTrackingNumber(string trackingNumber, CancellationToken cancellationToken)
-        {
-            return _shipments
-                        .AsNoTracking()
-                        .FirstOrDefaultAsync(x => x.TrackingNumber == trackingNumber, cancellationToken);
+            var query = _shipments.AsQueryable();
+            foreach (var propertyInfo in typeof(Shipment).GetProperties()) 
+            {
+                var parameter = Expression.Parameter(typeof(Shipment), "x");
+                var propertyAccess = Expression.Property(parameter, propertyInfo);
+                var value = Expression.Constant(propertyInfo.GetValue(predicate.Target));
+                var condition = Expression.Equal(propertyAccess, value);
+                var lambda = Expression.Lambda<Func<Shipment, bool>>(condition, parameter); 
+                query = query.Where(lambda);
+            }
+            return await query
+                .AsNoTracking()
+                .FirstOrDefaultAsync(cancellationToken);
         }
 
         /// <summary>
         /// <inheritdoc/>
         /// </summary>
         /// <param name="shipment"></param>
-        public void Update(Shipment shipment)
+        public void UpdateAsync(Shipment shipment)
         {
             _shipments.Update(shipment);
-            _logger.LogInformation($"The shipment {shipment.TrackingNumber} has been updated");
-         }
+        }
     }
 }

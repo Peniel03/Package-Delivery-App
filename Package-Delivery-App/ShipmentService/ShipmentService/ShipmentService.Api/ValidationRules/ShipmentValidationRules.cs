@@ -7,7 +7,6 @@ namespace ShipmentService.Api.ValidationRules
     /// </summary>
     public static class ShipmentValidationRules
     {
-      
         // <summary>
         /// Rule to validate the delivery method
         /// </summary>
@@ -21,8 +20,7 @@ namespace ShipmentService.Api.ValidationRules
                 .NotEmpty()
                 .MinimumLength(15)
                 .MaximumLength(15)
-            .WithMessage("Invalid delivery method");
-
+                .WithMessage("Invalid delivery method");
             return builder;
         }
 
@@ -39,8 +37,7 @@ namespace ShipmentService.Api.ValidationRules
                 .NotEmpty()
                 .MinimumLength(3)
                 .MaximumLength(15)
-            .WithMessage("Invalid shipment status");
-
+                .WithMessage("Invalid shipment status");
             return builder;
         }
 
@@ -57,9 +54,7 @@ namespace ShipmentService.Api.ValidationRules
                 .ScalePrecision(6,2)
                 .GreaterThan(0)
                 .WithMessage("Invalid shipment cost");
-
             return builder; 
         }
-
     }
 }

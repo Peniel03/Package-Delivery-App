@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
  
-
 namespace ShipmentService.DataAccess.Configurations
 {
     /// <summary>
@@ -19,26 +18,22 @@ namespace ShipmentService.DataAccess.Configurations
             builder.HasKey(x => x.Id);
             builder.Property(i => i.Id)
                 .ValueGeneratedOnAdd();
-
             builder.Property(x => x.Name)
                 .IsRequired(true);
             builder.Property(x => x.Phone)
                 .IsRequired(true);
-
             builder.HasMany(x => x.Packages)
                    .WithOne(x => x.Person)
                    .HasForeignKey(x => x.OwnerId);
-
             builder.HasMany(x => x.shipments)
                    .WithOne(x => x.Person)
-                   .HasForeignKey(x => x.SenderId);
-
+                   .HasForeignKey(x => x.SenderId)
+                   .OnDelete(DeleteBehavior.Restrict);
             builder.HasMany(x => x.shipments)
                    .WithOne(x => x.Person)
-                   .HasForeignKey(x => x.RecipientId);
-
+                   .HasForeignKey(x => x.RecipientId)
+                   .OnDelete(DeleteBehavior.Restrict);
             builder.ToTable("Persons");
-
         }
     }
 }

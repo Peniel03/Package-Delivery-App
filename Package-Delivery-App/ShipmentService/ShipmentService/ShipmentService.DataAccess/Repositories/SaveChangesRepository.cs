@@ -1,10 +1,5 @@
 ﻿using ShipmentService.DataAccess.DataContext;
 using ShipmentService.DataAccess.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ShipmentService.DataAccess.Repositories
 {
@@ -19,7 +14,6 @@ namespace ShipmentService.DataAccess.Repositories
         /// initialization of a new instance of <see cref="SaveChangesRepository"/>
         /// </summary>
         /// <param name="shipmentContext">the database context</param>
-
         public SaveChangesRepository(ShipmentContext shipmentContext)
         {
             _shipmentContext = shipmentContext;
@@ -33,6 +27,5 @@ namespace ShipmentService.DataAccess.Repositories
         {
             return _shipmentContext.SaveChangesAsync();
         }
-
     }
 }

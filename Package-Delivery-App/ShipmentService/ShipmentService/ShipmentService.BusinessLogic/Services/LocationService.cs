@@ -1,16 +1,9 @@
 ﻿using AutoMapper;
-using Microsoft.Extensions.Logging;
 using ShipmentService.BusinessLogic.DTOs;
 using ShipmentService.BusinessLogic.Exceptions;
 using ShipmentService.BusinessLogic.Interfaces;
 using ShipmentService.DataAccess.Interfaces;
 using ShipmentService.DataAccess.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ShipmentService.BusinessLogic.Services
 {
@@ -21,7 +14,7 @@ namespace ShipmentService.BusinessLogic.Services
     {
         private readonly ILocationRepository _locationRepository;
         private readonly IMapper _mapper;
-        private readonly ILogger<LocationService> _logger;
+        private readonly ILoggerManager _logger;
         private readonly ISaveChangesRepository _saveChangesRepository;
 
         /// <summary>
@@ -32,8 +25,8 @@ namespace ShipmentService.BusinessLogic.Services
         /// <param name="logger"></param>
         /// <param name="saveChangesRepository"></param>
         public LocationService(ILocationRepository locationRepository, 
-            IMapper mapper, 
-            ILogger<LocationService> logger, 
+            IMapper mapper,
+            ILoggerManager logger, 
             ISaveChangesRepository saveChangesRepository)
         {
             _locationRepository = locationRepository;
@@ -52,24 +45,21 @@ namespace ShipmentService.BusinessLogic.Services
         public async Task<LocationDto> AddAsync(LocationDto locationDto, CancellationToken cancellationToken)
         {
             var mappedLocation = _mapper.Map<Location>(locationDto);
-            var checkedLocation = await _locationRepository.GetById(mappedLocation.Id, cancellationToken);
-
-            //if (checkedLocation != null)
-            //{
-            //    _logger.LogError("Error occured while adding the location");
-            //    throw new AlreadyExistException("This location already exist");
-            //}
-
-            _locationRepository.Add(mappedLocation);
-
+            var checkedLocation = await _locationRepository.GetBySomethingAsync(x => x.Id == mappedLocation.Id, cancellationToken); 
+            if (checkedLocation != null)
+            {
+                _logger.LogError("Error occured while adding the location");
+                throw new AlreadyExistException("This location already exist");
+            }
+            _locationRepository.AddAsync(mappedLocation);
             try
             {
                 await _saveChangesRepository.SaveChangesAsync();
-                _logger.LogInformation("Changes successfully saved in the database");
+                _logger.LogInfo("Changes successfully saved in the database");
             }
             catch (Exception ex)
             {
-                _logger.LogInformation($"Error occured while adding a location{ex.Message}",ex);  
+                _logger.LogInfo($"Error occured while adding a location{ex.Message}");  
                 throw new ArgumentException($"Something went wrong while adding the location {ex.Message}");
             }
             return locationDto; 
@@ -84,27 +74,27 @@ namespace ShipmentService.BusinessLogic.Services
         /// <exception cref="ArgumentException">the argument exception</exception>
         /// <returns>A <see cref="Task"/>that contains a <seealso cref="LocationDto"/></returns>
 
-        public async Task<LocationDto> DeleteAsync(LocationDto locationDto, CancellationToken cancellationToken)
+        public async Task<LocationDto> DeleteAsync(int id, CancellationToken cancellationToken)
         {
+            LocationDto locationDto = new LocationDto(); 
             var mappedLocation = _mapper.Map<Location>(locationDto);
-            var checkedBook = await _locationRepository.GetById(mappedLocation.Id, cancellationToken);
-            if(checkedBook == null)
-            {
+            mappedLocation.Id = id;
+            var checkedLocation = await _locationRepository.GetBySomethingAsync(x => x.Id == mappedLocation.Id, cancellationToken); 
+            if(checkedLocation == null)
+            {                                   
                 throw new NotFoundException("The location wasn't found");
-            }
-
+            } 
             try
             {
-                _locationRepository.Delete(mappedLocation);
+                _locationRepository.DeleteAsync(mappedLocation);
                 await _saveChangesRepository.SaveChangesAsync();
-                _logger.LogInformation("Changes successfully saved in the database");
+                _logger.LogInfo("Changes successfully saved in the database");
             }
             catch (Exception ex)
             {
                 throw new ArgumentException($"Something went wrong while deleting the location {ex.Message}", ex);
             }
             return locationDto;
-
          }
 
         /// <summary>
@@ -115,28 +105,28 @@ namespace ShipmentService.BusinessLogic.Services
         /// <returns>A <see cref="Task"/>that contains a list of <seealso cref="LocationDto"/></returns>
         public async Task<List<LocationDto>> GetAllAsync(CancellationToken cancellationToken)
         {
-            var list = await _locationRepository.GetAll(cancellationToken);
+            var list = await _locationRepository.GetAllAsync(cancellationToken);
             if(list == null)
             {
                 throw new NotFoundException("There no registered location yet");
             }
-
             var listDto = _mapper.Map<List<LocationDto>>(list);
-
             return listDto;
         }
 
         /// <summary>
         /// <inheritdoc/>
         /// </summary>
-        /// <param name="locationDto">the location data transfer object</param>
+        /// <param name="id">the id of the location that we want to delete</param>
         /// <param name="cancellationToken">the cancellation token</param>
         /// <exception cref="NotFoundException">the not found exception</exception>
         /// <returns>A <see cref="Task"/>that contains <seealso cref="LocationDto"/></returns>
-        public async Task<LocationDto> GetByIdAsync(LocationDto locationDto, CancellationToken cancellationToken)
+        public async Task<LocationDto> GetByIdAsync(int id, CancellationToken cancellationToken)
         {
+            LocationDto locationDto = new LocationDto();
             var mappedLocation = _mapper.Map<Location>(locationDto);
-            var checkedLocation = await _locationRepository.GetById(mappedLocation.Id, cancellationToken);
+            mappedLocation.Id = id;
+            var checkedLocation = await _locationRepository.GetBySomethingAsync( x => x.Id == mappedLocation.Id, cancellationToken); 
             if(checkedLocation == null)
             {
                 throw new NotFoundException("This location wasn't found");
@@ -147,14 +137,16 @@ namespace ShipmentService.BusinessLogic.Services
         /// <summary>
         /// <inheritdoc/>
         /// </summary>
-        /// <param name="locationDto">the location data transfer object</param>
+        /// <param name="address">the address of the location that we want to get</param> 
         /// <param name="cancellationToken">the cancellation token</param>
         /// <exception cref="NotFoundException">the not found exception</exception>
         /// <returns>A <see cref="Task"/> that contains <seealso cref="LocationDto"/></returns>
-        public async Task<LocationDto> GetLocationByAddressAsync(LocationDto locationDto, CancellationToken cancellationToken)
+        public async Task<LocationDto> GetLocationByAddressAsync(string address, CancellationToken cancellationToken)
         {
+            LocationDto locationDto = new LocationDto(); 
             var mappedLocation = _mapper.Map<Location>(locationDto);
-            var checkedLocation = await _locationRepository.GetLocationByAddress(mappedLocation.Address, cancellationToken);
+            mappedLocation.Address = address;
+            var checkedLocation = await _locationRepository.GetBySomethingAsync(x => x.Address == mappedLocation.Address, cancellationToken); 
             if (checkedLocation == null)
             {
                 throw new NotFoundException("This location wasn't found");
@@ -165,14 +157,16 @@ namespace ShipmentService.BusinessLogic.Services
         /// <summary>
         /// <inheritdoc/>
         /// </summary>
-        /// <param name="locationDto"></param>
+        /// <param name="city">the city of the location that we want to get</param> 
         /// <param name="cancellationToken"></param>
         /// <exception cref="NotFoundException">the not found exception</exception>
         /// <returns>A <see cref="Task"/>that contains <seealso cref="LocationDto"/></returns>
-        public async Task<LocationDto> GetLocationByCityAsync(LocationDto locationDto, CancellationToken cancellationToken)
+        public async Task<LocationDto> GetLocationByCityAsync(string city, CancellationToken cancellationToken)
         {
+            LocationDto locationDto = new LocationDto();
             var mappedLocation = _mapper.Map<Location>(locationDto);
-            var checkedLocation = await _locationRepository.GetLocationByCity(mappedLocation.City, cancellationToken);
+            mappedLocation.City = city;
+            var checkedLocation = await _locationRepository.GetBySomethingAsync(x => x.City == mappedLocation.City, cancellationToken);
             if (checkedLocation == null)
             {
                 throw new NotFoundException("This location wasn't found");
@@ -183,14 +177,16 @@ namespace ShipmentService.BusinessLogic.Services
         /// <summary>
         /// <inheritdoc/>
         /// </summary>
-        /// <param name="locationDto">the location's data transfer object</param>
+        /// <param name="country">the country of the location that we want to get</param>
         /// <param name="cancellationToken">the cancellation token</param>
         /// <exception cref="NotFoundException">the not found exception</exception>
         /// <returns>A <see cref="Task"/>that contains <seealso cref="LocationDto"/></returns>
-        public async Task<LocationDto> GetLocationByCountryAsync(LocationDto locationDto, CancellationToken cancellationToken)
+        public async Task<LocationDto> GetLocationByCountryAsync(string country, CancellationToken cancellationToken)
         {
+            LocationDto locationDto = new LocationDto();
             var mappedLocation = _mapper.Map<Location>(locationDto);
-            var checkedLocation = await _locationRepository.GetLocationByCountry(mappedLocation.Country, cancellationToken);
+            mappedLocation.Country = country; 
+            var checkedLocation = await _locationRepository.GetBySomethingAsync(x => x.Country == mappedLocation.Country, cancellationToken);
             if (checkedLocation == null)
             {
                 throw new NotFoundException("This location wasn't found");
@@ -201,14 +197,16 @@ namespace ShipmentService.BusinessLogic.Services
         /// <summary>
         /// <inheritdoc/>
         /// </summary>
-        /// <param name="locationDto">the location's data transfert object</param>
+        /// <param name="postalcode">the postalcode of the location that we want to get</param>
         /// <param name="cancellationToken">th cancellation token</param>
         /// <exception cref="NotFoundException">the not found exception</exception>
         /// <returns>A <see cref="Task"/>that contains <seealso cref="LocationDto"/></returns>
-        public async Task<LocationDto> GetLocationByPostalCodeAsync(LocationDto locationDto, CancellationToken cancellationToken)
+        public async Task<LocationDto> GetLocationByPostalCodeAsync(string postalcode, CancellationToken cancellationToken)
         {
+            LocationDto locationDto = new LocationDto();
             var mappedLocation = _mapper.Map<Location>(locationDto);
-            var checkedLocation = await _locationRepository.GetLocationByPostalCode(mappedLocation.PostalCode, cancellationToken);
+            mappedLocation.PostalCode = postalcode;
+            var checkedLocation = await _locationRepository.GetBySomethingAsync(x => x.PostalCode == mappedLocation.PostalCode, cancellationToken);
             if (checkedLocation == null)
             {
                 throw new NotFoundException("This location wasn't found");
@@ -223,29 +221,26 @@ namespace ShipmentService.BusinessLogic.Services
         /// <param name="cancellationToken">the cancellation interne</param>
         /// /// <exception cref="NotFoundException">the not found exception</exception>
         /// <exception cref="ArgumentException">the argument exception</exception>
-        /// <returns>A <see cref="Task"/> that contains <seealso cref="LocationDto"/></returns>
-
+        /// <returns>A <see cref="Task"/> that contains <seealso cref="LocationDto"/></returns> 
         public async Task<LocationDto> UpdateAsync(LocationDto locationDto, CancellationToken cancellationToken)
         {
             var mappedLocation = _mapper.Map<Location>(locationDto);
-            var checkedLocation = await _locationRepository.GetById(mappedLocation.Id, cancellationToken);
+            var checkedLocation = await _locationRepository.GetBySomethingAsync(x => x.Id == mappedLocation.Id, cancellationToken); 
             if (checkedLocation == null)
             {
                 throw new NotFoundException("This location wasn't found");
-
             }
             try
             {
-                _locationRepository.Update(mappedLocation);
+                _locationRepository.UpdateAsync(mappedLocation);
                 await _saveChangesRepository.SaveChangesAsync();
-                _logger.LogInformation("Changes successfully saved in the database");
+                _logger.LogInfo("Changes successfully saved in the database");
             }
             catch(Exception ex)
             {
                 throw new ArgumentException($"Something went wrong while adding the location {ex.Message}");
             }
-
-            return locationDto;
+            return locationDto; 
         }
     }
 }

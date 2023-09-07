@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ShipmentService.DataAccess.Interfaces
+﻿namespace ShipmentService.DataAccess.Interfaces
 {
     /// <summary>
     /// The base repository interface to perform crup operation in all repositories
@@ -16,32 +10,32 @@ namespace ShipmentService.DataAccess.Interfaces
         /// Function to create a new record of a given entity
         /// </summary>
         /// <param name="entity">the entity where we want to add the record</param>
-        void Add(T entity);
+        void AddAsync(T entity);
 
         /// <summary>
         /// Function to update a record of a given entity
         /// </summary>
         /// <param name="entity">the entity where we want to update the record</param>
-        void Update(T entity);
+        void UpdateAsync(T entity);
 
         /// <summary>
         /// Function to delete a record of a given entity
         /// </summary>
         /// <param name="entity">the entity where we want to delete the record</param>
-        void Delete(T entity);
-
-        /// <summary>
-        /// Function to get a record of a given entity by id
-        /// </summary>
-        /// <param name="id">the id of the record that we want to get</param>
-        /// <returns>A <see cref="Task"/> that contains the given entity <seealso cref="T"/></returns>
-        Task<T> GetById(int id , CancellationToken cancellationToken);
+        void DeleteAsync(T entity);
 
         /// <summary>
         /// Function to get all records of a given entity
         /// </summary>
         /// <returns>A List of <see cref="T"/></returns>
-        Task<List<T>> GetAll(CancellationToken cancellationToken);
+        Task<List<T>> GetAllAsync(CancellationToken cancellationToken);
 
+        /// <summary>
+        /// function to get a record of a given entity by a given predicate
+        /// </summary>
+        /// <param name="predicate"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        Task<T> GetBySomethingAsync(Func<T, bool> predicate, CancellationToken cancellationToken);
     }
 }

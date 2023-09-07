@@ -1,17 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ShipmentService.BusinessLogic.Exceptions
+﻿namespace ShipmentService.BusinessLogic.Exceptions
 {
     /// <summary>
     /// the already exist exception 
     /// </summary>
     public class AlreadyExistException:Exception 
     {
-
         /// <summary>
         /// Initializes a new instance of <see cref="NotFoundException"/>
         /// </summary>
@@ -38,6 +31,5 @@ namespace ShipmentService.BusinessLogic.Exceptions
         {
 
         }
-
     }
 }

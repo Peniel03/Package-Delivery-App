@@ -1,15 +1,10 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ExpeditionService.DataAccess.Models
 {
   /// <summary>
-  /// 
+  /// the person class
   /// </summary>
     public class Person
     {
@@ -18,7 +13,7 @@ namespace ExpeditionService.DataAccess.Models
         /// <summary>
         /// The Id of the person
         /// </summary>
-        public int Id { get; set; }
+        public string Id { get; set; } 
 
         /// <summary>
         /// The name of the person

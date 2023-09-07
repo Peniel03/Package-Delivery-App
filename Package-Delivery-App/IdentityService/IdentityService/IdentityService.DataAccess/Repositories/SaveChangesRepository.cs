@@ -1,11 +1,5 @@
 ﻿using IdentityService.DataAccess.DataContext;
 using IdentityService.DataAccess.Interfaces;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace IdentityService.DataAccess.Repositories
 {
@@ -32,7 +26,7 @@ namespace IdentityService.DataAccess.Repositories
         /// <returns></returns>
         public Task SaveChangesAsync(CancellationToken cancellationToken)
         {
-            return _indentityContext.SaveChangesAsync(cancellationToken);
+            return  _indentityContext.SaveChangesAsync(cancellationToken);
         }
     }
 }
