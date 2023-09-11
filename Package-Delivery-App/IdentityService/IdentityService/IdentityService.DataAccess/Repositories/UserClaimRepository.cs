@@ -20,18 +20,15 @@ namespace IdentityService.DataAccess.Repositories
 
         private readonly IdentityContext _identityContext;
         private readonly DbSet<UserClaim> _claims;
-        private readonly ILogger<UserClaimRepository> _logger;
 
         /// <summary>
         /// Initializes a new instance of <see cref="UserClaimRepository"/>
         /// </summary>
         /// <param name="identityContext">The database context</param>
-        /// <param name="logger">the logger</param>
-        public UserClaimRepository(IdentityContext identityContext, ILogger<UserClaimRepository> logger)
+        public UserClaimRepository(IdentityContext identityContext)
         {
             _identityContext = identityContext;
             _claims = _identityContext.Set<UserClaim>();
-            _logger = logger;
         }
 
         /// <summary>
@@ -55,8 +52,6 @@ namespace IdentityService.DataAccess.Repositories
          public void UpdateUserClaim(List<UserClaim> claims)
         {
             _claims.UpdateRange(claims);
-
-            _logger.LogInformation("Updating the userClaim");
         }
     }
 }

@@ -21,6 +21,21 @@ namespace IdentityService.BusinessLogic.Interfaces
         Task<bool> CreateUserAsync(UserDto user, string password);
 
         /// <summary>
+        /// function to get the user by id
+        /// </summary>
+        /// <param name="user">the user that we want to get</param>
+        /// <param name="cancellationToken">the cancellation token</param>
+        /// <returns>A <see cref="Task"/>that contains a <seealso cref="UserDto"/></returns>
+        Task<UserDto> GetUserByIdAsync(UserDto user, CancellationToken cancellationToken);
+
+        /// <summary>
+        /// function to get all users
+        /// </summary>
+        /// <param name="cancellationToken">the cancellation token</param>
+        /// <returns>A <see cref="Task"/>that contaisn a list of <seealso cref="UserDto"/></returns>
+        Task<List<UserDto>> GetAllUserAsync(CancellationToken cancellationToken);
+
+        /// <summary>
         /// Function to delete a user from the database
         /// </summary>
         /// <param name="user">The user that we want to delete</param>

@@ -29,7 +29,6 @@ namespace IdentityService.DataAccess.Models
         /// <summary>
         /// The refresh Token code
         /// </summary>
-
         public string RefreshToken { get; set; } = string.Empty;
 
         /// <summary>
@@ -40,7 +39,6 @@ namespace IdentityService.DataAccess.Models
         /// <summary>
         /// The validaty time of refresh token
         /// </summary>
-
         public int LifeRefreshTokenInMinutes { get; set; }
 
         /// <summary>

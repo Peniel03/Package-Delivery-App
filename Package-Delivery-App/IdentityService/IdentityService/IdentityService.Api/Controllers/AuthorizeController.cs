@@ -10,7 +10,7 @@ namespace IdentityService.Api.Controllers
     /// <summary>
     /// The authorize controller
     /// </summary>
-    [Route("api/[controller]")]
+    [Route("api/users")]
     [ApiController]
     public class AuthorizeController : ControllerBase
     {
@@ -74,7 +74,7 @@ namespace IdentityService.Api.Controllers
         /// <param name="id">the id of the user</param>
         /// <param name="token">cancellation token from the HTTP request</param>
         /// <returns>the claim of the user</returns>
-        [HttpGet("getUserClaim/{id}")]
+        [HttpGet("get-claim/{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetUserClaim(int id, CancellationToken token)

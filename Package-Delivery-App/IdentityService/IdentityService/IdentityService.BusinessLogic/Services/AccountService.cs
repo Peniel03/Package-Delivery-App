@@ -2,10 +2,12 @@
 using IdentityService.BusinessLogic.DTOs;
 using IdentityService.BusinessLogic.Exceptions;
 using IdentityService.BusinessLogic.Interfaces;
+using IdentityService.DataAccess.Data.SeedData;
 using IdentityService.DataAccess.Interfaces;
 using IdentityService.DataAccess.Models;
 using IdentityService.DataAccess.Repositories;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -24,7 +26,7 @@ namespace IdentityService.BusinessLogic.Servcices
 
         private readonly IMapper _mapper;
         private readonly UserManager<User> _userManager;
-        private readonly ILogger<AccountService> _logger;
+        private readonly ILoggerManager _logger;
         private readonly IUserClaimRepository _userClaimRepository;
         private readonly ISaveChangesRepository _saveChangesRepository;
 
@@ -38,7 +40,7 @@ namespace IdentityService.BusinessLogic.Servcices
         /// <param name="saveChangesRepository">the save changes</param>
         public AccountService(UserManager<User> userManager,
             IMapper mapper,
-            ILogger<AccountService> logger,
+            ILoggerManager logger,
             IUserClaimRepository userClaimRepository,
             ISaveChangesRepository saveChangesRepository)
         {
@@ -54,7 +56,7 @@ namespace IdentityService.BusinessLogic.Servcices
         /// </summary>
         /// <param name="user">The user that we want to add</param>
         /// <param name="password">The use password</param>
-        /// <exception cref="NotFoundException">When the user is not found</exception>
+        /// <exception cref="AlreadyExistException">When the user is not found</exception>
         /// <returns>A <see cref="Task"/></returns>
         public async Task<bool> CreateUserAsync(UserDto user, string password)
         {
@@ -70,7 +72,7 @@ namespace IdentityService.BusinessLogic.Servcices
                     throw new AlreadyExistException("This user already exists");
                 }
 
-                checkedUser.SecurityStamp = Guid.NewGuid().ToString();
+                //checkedUser.SecurityStamp = Guid.NewGuid().ToString();
                 var result = await _userManager.CreateAsync(mappedUser, password);
                 var role = new UserRole(UserRoleTypes.RolesTypes[0]);
 
@@ -82,7 +84,7 @@ namespace IdentityService.BusinessLogic.Servcices
         /// <inheritdoc/>
         /// </summary>
         /// <param name="user">The user that we want to delete</param>
-        /// <returns>rue if the user has been deleted or false in the other case</returns>
+        /// <returns>A task <see cref="Task" that contains <seealso cref="UserDto"/>/></returns> 
         /// <exception cref="NotFoundException"></exception>
         public async Task<UserDto> DeleteUserAsync(UserDto user)
         {
@@ -100,6 +102,45 @@ namespace IdentityService.BusinessLogic.Servcices
 
                 return user;
             }
+        }
+
+        /// <summary>
+        /// <inheritdoc/>
+        /// </summary>
+        /// <param name="cancellationToken">the cancellation token</param>
+        /// <returns>A <see cref="Task"/> that contains a list of <seealso cref="UserDto"/></returns>
+        /// <exception cref="NotFoundException">the not found exception</exception>
+        public async Task<List<UserDto>> GetAllUserAsync(CancellationToken cancellationToken)
+        {
+            var list = await _userManager.Users.ToListAsync(cancellationToken);
+            if(list == null)
+            {
+                throw new NotFoundException("The users were not found");
+
+            }
+            var listDto = _mapper.Map<List<UserDto>>(list);
+
+            return listDto; 
+        }
+
+        /// <summary>
+        /// <inheritdoc/> 
+        /// </summary>
+        /// <param name="user">the user</param>
+        /// <param name="cancellationToken">the cancellation token</param>
+        /// <returns>A <see cref="Task"/> that contains a <seealso cref="UserDto"/></returns>
+        /// <exception cref="NotFoundException"></exception>
+        public async Task<UserDto> GetUserByIdAsync(UserDto user, CancellationToken cancellationToken)
+        {
+            var mapperUser = _mapper.Map<User>(user);
+            var checkedUder = await _userManager.FindByIdAsync(mapperUser.Id.ToString());
+            if( checkedUder != null )
+            {
+                throw new NotFoundException("The user was not found");
+
+            }
+            return _mapper.Map<UserDto>(checkedUder); 
+
         }
 
         /// <summary>
