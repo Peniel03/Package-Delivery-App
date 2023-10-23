@@ -1,0 +1,48 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33502.453
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ShipmentService.DataAccess", "ShipmentService.DataAccess", "{9DD9B8C8-F04E-49B7-9742-B776643516C0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ShipmentService.BusinessLogic", "ShipmentService.BusinessLogic", "{378C40AF-1610-479B-A701-55BBF2FB06B7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ShipmentService.Api", "ShipmentService.Api", "{3377DA08-B4EA-41AE-84C8-B044FE0680D7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShipmentService.DataAccess", "ShipmentService.DataAccess\ShipmentService.DataAccess.csproj", "{A2D4258A-26F9-46AD-8C19-BAB0D7E94B8E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShipmentService.BusinessLogic", "ShipmentService.BusinessLogic\ShipmentService.BusinessLogic.csproj", "{1D80EF3B-6AE7-471F-88DB-A20CA666F3F6}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShipmentService.Api", "ShipmentService.Api\ShipmentService.Api.csproj", "{CA65E808-2A9C-4F19-AD08-925F0CC80D7C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A2D4258A-26F9-46AD-8C19-BAB0D7E94B8E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2D4258A-26F9-46AD-8C19-BAB0D7E94B8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2D4258A-26F9-46AD-8C19-BAB0D7E94B8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2D4258A-26F9-46AD-8C19-BAB0D7E94B8E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1D80EF3B-6AE7-471F-88DB-A20CA666F3F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D80EF3B-6AE7-471F-88DB-A20CA666F3F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1D80EF3B-6AE7-471F-88DB-A20CA666F3F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1D80EF3B-6AE7-471F-88DB-A20CA666F3F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CA65E808-2A9C-4F19-AD08-925F0CC80D7C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CA65E808-2A9C-4F19-AD08-925F0CC80D7C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CA65E808-2A9C-4F19-AD08-925F0CC80D7C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CA65E808-2A9C-4F19-AD08-925F0CC80D7C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{A2D4258A-26F9-46AD-8C19-BAB0D7E94B8E} = {9DD9B8C8-F04E-49B7-9742-B776643516C0}
+		{1D80EF3B-6AE7-471F-88DB-A20CA666F3F6} = {378C40AF-1610-479B-A701-55BBF2FB06B7}
+		{CA65E808-2A9C-4F19-AD08-925F0CC80D7C} = {3377DA08-B4EA-41AE-84C8-B044FE0680D7}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {886F9429-C85C-43B6-BF3F-F6226B4C6A71}
+	EndGlobalSection
+EndGlobal
