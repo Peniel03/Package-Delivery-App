@@ -1,12 +1,6 @@
 ﻿using IdentityService.DataAccess.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace IdentityService.DataAccess.Configurations
 {
@@ -24,7 +18,6 @@ namespace IdentityService.DataAccess.Configurations
             builder.HasKey(x => x.Id);
             builder.Property(x => x.Id)
                 .ValueGeneratedOnAdd();
-
             builder.Property(x => x.RefreshToken)
                 .IsRequired(true);
             builder.Property(x => x.LifeRefreshTokenInMinutes)
@@ -34,9 +27,7 @@ namespace IdentityService.DataAccess.Configurations
             builder.Ignore(x => x.IsActive);
             builder.HasOne(x => x.User)
                 .WithMany(x => x.UserRefreshTokens);
-
-            builder.ToTable("UserRefreshTokens");
-
+            builder.ToTable("UserRefreshTokens"); 
         }
     }
 }

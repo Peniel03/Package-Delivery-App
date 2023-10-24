@@ -1,9 +1,4 @@
 ﻿using IdentityService.DataAccess.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace IdentityService.DataAccess.Interfaces
 {
@@ -28,8 +23,7 @@ namespace IdentityService.DataAccess.Interfaces
         /// Function to get a refresh userRefreshToken that exists in the database
         /// </summary>
         /// <param name="tokenRefreshed">The user refresh userRefreshToken that we want to get</param>
-         /// <returns>An object <see cref="UserRefreshToken"/></returns>
+        /// <returns>An object <see cref="UserRefreshToken"/></returns>
         Task<UserRefreshToken> GetSavedUserRefreshTokensAsync(string tokenRefreshed, CancellationToken token);
-
     }
 }

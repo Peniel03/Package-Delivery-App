@@ -1,0 +1,33 @@
+version: '3.4'
+
+networks:
+  packagedelivery_identityservice: 
+
+services:
+   packagedelivery_identityservice_db:
+        container_name: identity-db
+        image: "mcr.microsoft.com/mssql/server:2019-latest"
+        ports:
+        - 8082:1433
+        environment:
+        - ACCEPT_EULA=Y
+        - SA_PASSWORD=Peniel_pasword12
+       
+   identityservice.api:
+        container_name: packagedelivery-identityservice
+        image: ${DOCKER_REGISTRY-}identityserviceapi
+        build:
+          context: .
+          dockerfile: IdentityService.Api/Dockerfile
+        ports:
+         - 8081:80
+        # depends_on:
+        # - packagedelivery_identityservice_db
+        environment:
+        # - DB_HOST=packagedelivery_identityservice_db
+        # - DB_NAME=PackageDeliveryIdentityDb
+        # - DB_SA_PASSWORD=penielpasword12
+            - CONNECTIONSTRINGS__DEFAULTCONNECTION=Server=identity-db;Database=IdentityService;User=sa;Password=Peniel_pasword12;Encrypt=false;
+        depends_on:
+           - packagedelivery_identityservice_db
+  

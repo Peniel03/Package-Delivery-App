@@ -1,11 +1,6 @@
 ﻿using IdentityService.DataAccess.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace IdentityService.DataAccess.Configurations
 {
@@ -24,9 +19,7 @@ namespace IdentityService.DataAccess.Configurations
             builder.Property(x => x.Email).IsRequired();
             builder.Property(x => x.PhoneNumber).IsRequired();
             builder.Property(x => x.PasswordHash).IsRequired();
-
-            builder.ToTable("Users");
-
+            builder.ToTable("Users"); 
         }
     }
 }

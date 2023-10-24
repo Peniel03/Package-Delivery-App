@@ -1,0 +1,34 @@
+version: '3.4'
+
+networks:
+  packagedelivery_expeditionservice: 
+
+services:
+  packagedelivery_expeditionservice_db: 
+        container_name: expedition-db
+        image: mcr.microsoft.com/mssql/server:2022-latest
+        ports:
+        - 8082:1433
+        environment:
+        - ACCEPT_EULA=Y
+        - SA_PASSWORD=penielpasword12
+        networks: 
+        - packagedelivery_expeditionservice
+  expeditionservice.api:
+       container_name: packagedelivery-expeditionservice
+       image: ${DOCKER_REGISTRY-}expeditionserviceapi
+       build:
+         context: .
+         dockerfile: ExpeditionService.Api/Dockerfile
+       ports:
+         - 8081:80
+       # depends_on:
+       #  - packagedelivery_expeditionservice_db
+       # environment:
+       # - DB_HOST=packagedelivery_expeditionservice_db
+       # - DB_NAME=PackageDelivery-expeditionService
+       # - DB_SA_PASSWORD=penielpasword12
+         - CONNECTIONSTRINGS__DEFAULTCONNECTION=Server=expedition-db;Database=ExpeditionService;User=sa;Password=Peniel_pasword12;Encrypt=false;
+
+       networks:
+       - packagedelivery_expeditionservice 

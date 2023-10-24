@@ -20,7 +20,6 @@ namespace IdentityService.Api.ValidationRules
                 .NotEmpty()
                 .EmailAddress()
                 .WithMessage("Received invalid email");
-
             return builder;
         }
 
@@ -37,7 +36,6 @@ namespace IdentityService.Api.ValidationRules
                 .NotNull()
                 .MinimumLength(3)
                 .WithMessage("Invalid Name");
-
             return builder;
         }
 
@@ -56,7 +54,6 @@ namespace IdentityService.Api.ValidationRules
                     2[98654321]\d|9[8543210]|8[6421]|6[6543210]|5[87654321]|
                     4[987654310]|3[9643210]|2[70]|7|1)\d{1,14}$")
                 .WithMessage("Invalid phone Number");
-
             return builder;
         }
 
@@ -71,10 +68,7 @@ namespace IdentityService.Api.ValidationRules
             var builder = ruleBuilder
                 .NotEmpty()
                 .MinimumLength(10);
-
             return builder;
         }
-
-
     }
 }

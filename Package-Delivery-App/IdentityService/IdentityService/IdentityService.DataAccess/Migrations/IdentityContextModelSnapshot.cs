@@ -37,6 +37,10 @@ namespace IdentityService.DataAccess.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("ConfirmedPassword")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(256)
@@ -67,6 +71,10 @@ namespace IdentityService.DataAccess.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -85,6 +93,7 @@ namespace IdentityService.DataAccess.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("UserName")
+                        .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 

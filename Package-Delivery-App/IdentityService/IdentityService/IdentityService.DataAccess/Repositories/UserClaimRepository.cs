@@ -2,13 +2,6 @@
 using IdentityService.DataAccess.Interfaces;
 using IdentityService.DataAccess.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace IdentityService.DataAccess.Repositories
 {
@@ -17,21 +10,17 @@ namespace IdentityService.DataAccess.Repositories
     /// </summary>
     public class UserClaimRepository : IUserClaimRepository
     {
-
         private readonly IdentityContext _identityContext;
         private readonly DbSet<UserClaim> _claims;
-        private readonly ILogger<UserClaimRepository> _logger;
 
         /// <summary>
         /// Initializes a new instance of <see cref="UserClaimRepository"/>
         /// </summary>
         /// <param name="identityContext">The database context</param>
-        /// <param name="logger">the logger</param>
-        public UserClaimRepository(IdentityContext identityContext, ILogger<UserClaimRepository> logger)
+        public UserClaimRepository(IdentityContext identityContext)
         {
             _identityContext = identityContext;
             _claims = _identityContext.Set<UserClaim>();
-            _logger = logger;
         }
 
         /// <summary>
@@ -40,9 +29,9 @@ namespace IdentityService.DataAccess.Repositories
         /// <param name="id">The id of the user that we want to get the claims</param>
         /// <param name="cancellationToken">The cancellation token</param>
         /// <returns>List of <see cref="UserClaim"/></returns>
-        public Task<List<UserClaim>> GetUserClaimsAsync(int id, CancellationToken cancellationToken)
+        public async Task<List<UserClaim>> GetUserClaimsAsync(int id, CancellationToken cancellationToken)
         {
-            return _claims
+            return await _claims
                         .Where(userClaim => userClaim.Id == id)
                         .AsNoTracking()
                         .ToListAsync(cancellationToken);
@@ -55,8 +44,6 @@ namespace IdentityService.DataAccess.Repositories
          public void UpdateUserClaim(List<UserClaim> claims)
         {
             _claims.UpdateRange(claims);
-
-            _logger.LogInformation("Updating the userClaim");
         }
     }
 }

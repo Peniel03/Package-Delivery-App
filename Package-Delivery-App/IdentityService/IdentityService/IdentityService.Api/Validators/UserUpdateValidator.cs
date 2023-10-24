@@ -5,7 +5,7 @@ using IdentityService.Api.ValidationRules;
 namespace IdentityService.Api.Validators
 {
     /// <summary>
-    /// 
+    /// the validator for the user update request
     /// </summary>
     public class UserUpdateValidator : AbstractValidator<UserUpdateRequest>
     {

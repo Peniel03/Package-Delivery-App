@@ -1,9 +1,4 @@
 ﻿using IdentityService.DataAccess.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace IdentityService.DataAccess.Interfaces
 {
@@ -25,6 +20,5 @@ namespace IdentityService.DataAccess.Interfaces
         /// </summary>
         /// <param name="claims">The claims that we want to update</param>
         void UpdateUserClaim(List<UserClaim> claims);
-
     }
 }

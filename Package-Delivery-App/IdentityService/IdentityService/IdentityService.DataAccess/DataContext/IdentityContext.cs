@@ -37,6 +37,5 @@ namespace IdentityService.DataAccess.DataContext
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(IdentityContext).Assembly);
             base.OnModelCreating(modelBuilder);
         }
-
     }
 }

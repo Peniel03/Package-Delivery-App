@@ -16,34 +16,16 @@ namespace IdentityService.Api.Mapping.Profiles
         public UserProfile()
         {
 
-            CreateMap<UserDto, User>()
-                .ForMember(dest => dest.Id, source => source.MapFrom(source => source.Id))
-                .ForMember(dest => dest.Email, source => source.MapFrom(source => source.Email))
-                .ForMember(dest => dest.PhoneNumber, source => source.MapFrom(source => source.PhoneNumber))
-                .ForMember(dest => dest.FirstName, source => source.MapFrom(source => source.FirstName))
-                .ForMember(dest => dest.LastName, source => source.MapFrom(source => source.LastName))
-                .ForMember(dest => dest.UserName, source => source.MapFrom(source => source.UserName))
+            CreateMap<UserDto, User>() 
                 .ReverseMap();
 
-            CreateMap<UserDto, UserCreateRequest>()
-                .ForMember(dest => dest.UserName, source => source.MapFrom(source => source.UserName))
-                .ForMember(dest => dest.Email, source => source.MapFrom(source => source.Email))
-                .ForMember(dest => dest.PhoneNumber, source => source.MapFrom(source => source.PhoneNumber))
-                .ForMember(dest => dest.FirstName, source => source.MapFrom(source => source.FirstName))
-                .ForMember(dest => dest.LastName, source => source.MapFrom(source => source.LastName))
+            CreateMap<AuthorizeUserDto, User>()
                 .ReverseMap();
 
-            CreateMap<UserDto, UserUpdateRequest>()
-                .ForMember(dest => dest.UserName, source => source.MapFrom(source => source.UserName))
-                .ForMember(dest => dest.Email, source => source.MapFrom(source => source.Email))
-                .ForMember(dest => dest.PhoneNumber, source => source.MapFrom(source => source.PhoneNumber))
-                .ForMember(dest => dest.FirstName, source => source.MapFrom(source => source.FirstName))
-                .ForMember(dest => dest.LastName, source => source.MapFrom(source => source.LastName))
-                .ReverseMap();
+            CreateMap<UserUpdatePasswordDto, User>()
+               .ReverseMap();
 
-            CreateMap<UserDto, UserLoginRequest>()
-                .ForMember(dest => dest.Email, source => source.MapFrom(source => source.Email))
-           //   .ForMember(dest => dest.Password, source => source.MapFrom(source => source.PasswordHash))
+            CreateMap<DeleteUserDto, User>()
                 .ReverseMap();
         }
     }
