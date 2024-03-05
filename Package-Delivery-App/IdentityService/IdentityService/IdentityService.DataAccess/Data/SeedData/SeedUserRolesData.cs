@@ -1,5 +1,4 @@
-﻿using IdentityService.BusinessLogic.DTOs;
-using IdentityService.DataAccess.Models;
+﻿using IdentityService.DataAccess.Models;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
@@ -7,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IdentityService.BusinessLogic.SeedData
+namespace IdentityService.DataAccess.Data.SeedData
 {
     /// <summary>
     /// Add seed data for the UserRole Class
@@ -30,20 +29,27 @@ namespace IdentityService.BusinessLogic.SeedData
         /// </summary>
         public void SeedData()
         {
-            try
+
+            if (_roleManager.Roles is not null)
             {
-                if (_roleManager.Roles == null)
+                return;
+            }
+            else
+            {
+                try
                 {
-                    foreach (var role in UserRoleTypes.RolesTypes)
-                    {
-                        _roleManager.CreateAsync(new UserRole(role));
-                    }
+                      foreach (var role in UserRoleTypes.RolesTypes)
+                        {
+                            _roleManager.CreateAsync(new UserRole(role));
+                        }
+                    
+                }
+                catch (NotSupportedException ex)
+                {
+                    throw ex;
                 }
             }
-            catch (NotSupportedException ex)
-            {
-                throw ex;
-            }
+            
         }
 
     }
